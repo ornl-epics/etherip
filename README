@@ -1,0 +1,16 @@
+Etherip
+-------
+
+A Java library for reading and writing tags on AllenBradley Control Logix or Compact Logix
+PLCs via the Ethernet/IP protocol (aka Devicenet-over-Ethernet or CIP-over-Ethernet).
+
+This is a Java implementation of the same protocol that
+http://sourceforge.net/apps/trac/epics/wiki/EtherIP
+provides in C combines with EPICS driver/device support
+for IOCs.
+
+The Java implementation is currently only the basic read/write library
+with unit tests to demonstrate the functionality.
+
+Eventually, this could be connected to an EPICS V4 network server.
+ 
