@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EthernetIP Allen Bradley Control Logix/Compact Logix library
+Bundle-SymbolicName: etherip
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit
+Bundle-Vendor: Kay Kasemir <kasemirk@ornl.gov> - SNS
