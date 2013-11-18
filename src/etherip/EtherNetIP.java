@@ -147,7 +147,7 @@ public class EtherNetIP implements AutoCloseable
 		final Encapsulation encap =
 			new Encapsulation(SendRRData, connection.getSession(),
 				new SendRRDataProtocol(
-					new UnconnectedSendProtocol(0,
+					new UnconnectedSendProtocol(slot,
 					    cip_read)));
 		connection.execute(encap);
 		
@@ -164,7 +164,7 @@ public class EtherNetIP implements AutoCloseable
 	    final Encapsulation encap =
             new Encapsulation(SendRRData, connection.getSession(),
                 new SendRRDataProtocol(
-                    new UnconnectedSendProtocol(0,
+                    new UnconnectedSendProtocol(slot,
                         new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
                             new CIPMultiRequestProtocol(reads)))));
 	    connection.execute(encap);
@@ -179,7 +179,7 @@ public class EtherNetIP implements AutoCloseable
 	    final Encapsulation encap =
 	            new Encapsulation(SendRRData, connection.getSession(),
 	                    new SendRRDataProtocol(
-	                    new UnconnectedSendProtocol(0,
+	                    new UnconnectedSendProtocol(slot,
 	                        new MessageRouterProtocol(CNService.CIP_WriteData, Symbol(tag), cip_write))));
         connection.execute(encap);
     }
