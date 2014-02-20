@@ -26,6 +26,7 @@ import etherip.protocol.Encapsulation.Command;
 import etherip.types.CNService;
 import etherip.util.Hexdump;
 
+/** @author Kay Kasemir */
 public class SendRRDataTest
 {
 	final private ByteBuffer buf = TestSettings.getBuffer();

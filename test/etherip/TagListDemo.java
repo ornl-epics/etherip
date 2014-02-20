@@ -16,6 +16,7 @@ import org.junit.Test;
 import etherip.protocol.Connection;
 import etherip.protocol.RegisterSession;
 
+/** @author Kay Kasemir */
 public class TagListDemo
 {
 	@Before

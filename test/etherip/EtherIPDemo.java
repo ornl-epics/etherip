@@ -19,6 +19,7 @@ import etherip.types.CIPData.Type;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
+/** @author Kay Kasemir */
 public class EtherIPDemo
 {
 	@Before

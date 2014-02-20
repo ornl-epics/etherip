@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import etherip.util.Hexdump;
 
+/** @author Kay Kasemir */
 public class HexdumpTest
 {
     @Test

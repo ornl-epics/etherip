@@ -14,6 +14,9 @@ import java.util.Timer;
 import etherip.Tag;
 import etherip.protocol.Connection;
 
+/** Timer-based periodic scanner for {@link ScanList Scan Lists} 
+ *  @author Kay Kasemir
+ */
 class Scanner
 {
     final private Connection connection;

@@ -12,7 +12,6 @@ import java.util.Arrays;
 
 import etherip.util.Hexdump;
 
-
 /** Encapsulation commands
  *
  *  <p>Spec 4 p. 164

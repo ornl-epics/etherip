@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 import etherip.protocol.Connection;
 
-
+/** @author Kay Kasemir */
 public class TestSettings
 {
     final private static Properties settings = new Properties();

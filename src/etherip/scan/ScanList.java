@@ -16,6 +16,9 @@ import etherip.Tag;
 import etherip.TagList;
 import etherip.protocol.Connection;
 
+/** List of tags that are processed (read or written)
+ *  @author Kay Kasemir
+ */
 class ScanList extends TimerTask
 {
     final private double period;

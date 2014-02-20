@@ -24,6 +24,7 @@ import etherip.protocol.ProtocolAdapter;
 import etherip.types.CNService;
 import etherip.util.Hexdump;
 
+/** @author Kay Kasemir */
 public class MessageRouterPDUTest
 {
 	private ByteBuffer buf = TestSettings.getBuffer();

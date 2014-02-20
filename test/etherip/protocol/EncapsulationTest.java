@@ -23,6 +23,7 @@ import etherip.protocol.Encapsulation;
 import etherip.protocol.ProtocolAdapter;
 import etherip.util.Hexdump;
 
+/** @author Kay Kasemir */
 public class EncapsulationTest
 {
 	private int body_size = 0;

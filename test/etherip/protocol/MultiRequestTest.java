@@ -21,6 +21,7 @@ import etherip.TestSettings;
 import etherip.types.CNService;
 import etherip.util.Hexdump;
 
+/** @author Kay Kasemir */
 public class MultiRequestTest
 {
 	private ByteBuffer buf = TestSettings.getBuffer();
