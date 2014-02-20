@@ -77,9 +77,6 @@ public class MessageRouterProtocol extends ProtocolAdapter
     		throw new Exception("Received reply with unknown service code 0x" + Integer.toHexString(service_code));
     	if (! reply.isReply())
     		throw new Exception("Expected reply, got " + reply);
-    	final CNService expected_reply = service.getReply();
-		if (expected_reply != null  &&  expected_reply!= reply)
-    		throw new Exception("Expected " + expected_reply + ", got " + reply);
     	
     	final int reserved = buf.get();
     	status = buf.get();
@@ -99,6 +96,9 @@ public class MessageRouterProtocol extends ProtocolAdapter
         	for (int ext : ext_status)
             	log.append("USINT ext status        : 0x").append(Integer.toHexString(ext)).append(" (").append(decodeExtendedStatus(ext)).append(")\n");
         }
+        final CNService expected_reply = service.getReply();
+        if (expected_reply != null  &&  expected_reply!= reply)
+            throw new Exception("Expected " + expected_reply + ", got " + reply);
     	
     	body.decode(buf, available - 4 - 2*ext_status_size, log);
     }
