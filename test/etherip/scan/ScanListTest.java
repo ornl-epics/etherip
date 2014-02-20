@@ -86,6 +86,43 @@ public class ScanListTest implements TagListener
         tag1.removeListener(this);
     }
 
+    @Test(timeout=20000)
+    public void testScanListWrite() throws Exception
+    {
+        Logger.getLogger("").setLevel(Level.CONFIG);
+            
+        final Scanner scanner = new Scanner(connection);
+        final Tag tag1 = scanner.add(1.0, TestSettings.get("write_tag"));
+        final Tag tag2 = scanner.add(2.0, TestSettings.get("bool_tag"));
+        
+        tag1.addListener(this);
+        tag2.addListener(this);
+        updates.await(10, SECONDS);
+        assertThat(updates.getCount(), equalTo(0l));
+
+        // Increment value of tag
+        Number value = tag1.getValue().getNumber(0);
+        System.out.println(tag1.getName() + " is " + value);
+        System.out.println(" .. incrementing .. ");
+        tag1.setWriteValue(0, value.intValue() + 1);
+        
+        // Tag will now actually indicate the value that's to be written.
+        // Should wait for it to really be written (could check tag1.getState()),
+        // then wait for the next readback to assert that we read that new value.
+        // In here, we simply wait. In the console, you should see that a readback
+        // arrived with the new value.
+        Thread.sleep(2000);
+        while (tag1.getValue().equals(value))
+            Thread.sleep(200);
+        
+        System.out.println(tag1.getName() + " changed to " + tag1.getValue());
+        
+        scanner.stop();
+
+        tag2.removeListener(this);
+        tag1.removeListener(this);
+    }
+    
     @Test
     public void testScanListError() throws Exception
     {

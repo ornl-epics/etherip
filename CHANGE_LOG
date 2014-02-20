@@ -1,0 +1,7 @@
+Changes
+-------
+
+Version number is in EtherNetIP.version
+
+* 1.0 - 2014/02/20
+Fix: Missing 'pad' for bool data. Demo of scan list read/write.
