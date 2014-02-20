@@ -137,9 +137,15 @@ public class Connection implements AutoCloseable
 					new Object[] { buffer.remaining(), Hexdump.toHexdump(buffer) });
 
 		final StringBuilder log = logger.isLoggable(Level.FINER) ? new StringBuilder() : null;
-		decoder.decode(buffer, buffer.remaining(), log);
-		if (log != null)
-			logger.finer("Protocol Decoding\n" + log.toString());
+		try
+		{
+		    decoder.decode(buffer, buffer.remaining(), log);
+		}
+		finally
+		{   // Show log even on error
+    		if (log != null)
+    			logger.finer("Protocol Decoding\n" + log.toString());
+		}
     }
 
 	/** Write protocol request and handle response
