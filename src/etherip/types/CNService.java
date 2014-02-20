@@ -25,7 +25,8 @@ public enum CNService
     Get_Attribute_Single_Reply(0x0E | 0x80),
     CIP_MultiRequest_Reply(0x0A | 0x80),
     CIP_ReadData_Reply(0x4C | 0x80),
-    CIP_WriteData_Reply(0x4D | 0x80);
+    CIP_WriteData_Reply(0x4D | 0x80),
+    CM_Unconnected_Send_Reply(0x52 | 0x80);
 
 	final private byte code;
 	
