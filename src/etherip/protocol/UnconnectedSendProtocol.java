@@ -36,7 +36,7 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
 	@Override
 	public int getRequestSize()
 	{
-		return encoder.getRequestSize() + 4 + body.getRequestSize() + 4;
+		return encoder.getRequestSize() + 4 + body.getRequestSize() + (needPad() ? 1 : 0) + 4;
 	}
 
 	/** {@inheritDoc} */
@@ -51,6 +51,8 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
         buf.put(ticks);
         final short body_size = (short) body.getRequestSize();
         buf.putShort(body_size);
+        
+        final boolean pad = needPad();
 
         if (log != null)
         {
@@ -62,6 +64,8 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
         }
         
         body.encode(buf, log);
+        if (pad)
+            buf.put((byte) 0);
         
         buf.put((byte) 1); // Path size
         buf.put((byte) 0); // reserved
@@ -70,6 +74,8 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
         if (log != null)
         {
         	log.append("  /\\/\\/\\ embedded message /\\/\\/\\\n");
+            if (pad)
+                log.append("USINT pad               : 0 (odd length message)\n");
         	log.append("USINT path size         : ").append(1).append(" words\n");
         	log.append("USINT reserved          : 0\n");
         	log.append("USINT port 1, slot ").append(slot).append("\n");
@@ -84,5 +90,12 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
     	// The response then arrives without CM_Unconnected_Send wrapper,
     	// so pass decoding on to the body.
     	body.decode(buf, available, log);
+    }
+    
+    /** @return Is path of odd length, requiring a pad byte? */
+    private boolean needPad()
+    {
+        // Findbugs: x%2==1 fails for negative numbers
+        return (body.getRequestSize() % 2) != 0;
     }
 }
