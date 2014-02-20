@@ -7,10 +7,17 @@
  *******************************************************************************/
 package etherip;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import etherip.types.CIPData;
+import etherip.types.CIPData.Type;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class EtherIPDemo
 {
@@ -50,4 +57,40 @@ public class EtherIPDemo
 			plc.readTags(TestSettings.get("tag1"), TestSettings.get("tag2"));
 		}
 	}
+
+    @Test
+    public void testBool() throws Exception
+    {
+        Logger.getLogger("").setLevel(Level.INFO);
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
+        )
+        {
+            plc.connect();
+            
+            final String tag = TestSettings.get("bool_tag");
+            CIPData value = plc.readTag(tag);
+            System.out.println("Original Value: " + value);
+            
+            value = new CIPData(Type.BOOL, 1);
+            value.set(0, 255);
+            plc.writeTags(new String[] { tag }, new CIPData[] { value });
+            value = plc.readTag(tag);
+            System.out.println("Wrote 255: " + value);            
+            assertThat(value.getNumber(0).intValue(), not(equalTo(0)));
+
+            value.set(0, 1);
+            plc.writeTag(tag, value);            
+            value = plc.readTag(tag);
+            System.out.println("Wrote 1: " + value);
+            assertThat(value.getNumber(0).intValue(), not(equalTo(0)));
+
+            value.set(0, 0);
+            plc.writeTag(tag, value);
+            value = plc.readTag(tag);
+            System.out.println("Wrote 0: " + value);
+            assertThat(value.getNumber(0).intValue(), equalTo(0));
+        }
+    }
 }

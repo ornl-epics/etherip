@@ -11,14 +11,12 @@ import static etherip.protocol.Encapsulation.Command.SendRRData;
 import static etherip.protocol.Encapsulation.Command.UnRegisterSession;
 import static etherip.types.CNPath.Identity;
 import static etherip.types.CNPath.MessageRouter;
-import static etherip.types.CNPath.Symbol;
 import static etherip.types.CNService.Get_Attribute_Single;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import etherip.protocol.CIPMultiRequestProtocol;
-import etherip.protocol.CIPWriteDataProtocol;
 import etherip.protocol.Connection;
 import etherip.protocol.Encapsulation;
 import etherip.protocol.GetShortAttributeProtocol;
@@ -26,6 +24,7 @@ import etherip.protocol.GetStringAttributeProtocol;
 import etherip.protocol.ListServices;
 import etherip.protocol.ListServicesProtocol.Service;
 import etherip.protocol.MRChipReadProtocol;
+import etherip.protocol.MRChipWriteProtocol;
 import etherip.protocol.MessageRouterProtocol;
 import etherip.protocol.ProtocolAdapter;
 import etherip.protocol.RegisterSession;
@@ -169,21 +168,40 @@ public class EtherNetIP implements AutoCloseable
                             new CIPMultiRequestProtocol(reads)))));
 	    connection.execute(encap);
 	        
+	    // TODO Nothing decodes the individual responses
 	    return null;
     }
 
 	
 	public void writeTag(final String tag, final CIPData value) throws Exception
 	{
-	    final CIPWriteDataProtocol cip_write = new CIPWriteDataProtocol(value);
+	    final MRChipWriteProtocol cip_write = new MRChipWriteProtocol(tag, value);
+
 	    final Encapsulation encap =
 	            new Encapsulation(SendRRData, connection.getSession(),
-	                    new SendRRDataProtocol(
+                    new SendRRDataProtocol(
 	                    new UnconnectedSendProtocol(slot,
-	                        new MessageRouterProtocol(CNService.CIP_WriteData, Symbol(tag), cip_write))));
+	                            cip_write)));
         connection.execute(encap);
     }
-	
+
+	public void writeTags(final String[] tags, final CIPData[] values) throws Exception
+    {
+	    if (tags.length != values.length)
+	        throw new IllegalArgumentException("Got " + tags.length + " tags but " + values.length + " values");
+        final MRChipWriteProtocol[] writes = new MRChipWriteProtocol[tags.length];
+        for (int i=0; i<tags.length; ++i)
+            writes[i] = new MRChipWriteProtocol(tags[i], values[i]);
+
+        final Encapsulation encap =
+                new Encapsulation(SendRRData, connection.getSession(),
+                    new SendRRDataProtocol(
+                        new UnconnectedSendProtocol(slot,
+                                new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
+                                        new CIPMultiRequestProtocol(writes)))));
+        connection.execute(encap);
+    }
+
 	/** Unregister session (device will close connection) */
 	private void unregisterSession()
 	{
