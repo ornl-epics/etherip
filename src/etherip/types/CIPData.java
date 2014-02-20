@@ -94,7 +94,6 @@ final public class CIPData
         case REAL:
             this.data = ByteBuffer.allocate(type.element_size * elements);
             this.data.order(Connection.BYTE_ORDER);
-            this.data.putShort(type.code);
             this.type = type;
             this.elements = (short) elements;
             break;
