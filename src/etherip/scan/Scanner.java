@@ -51,5 +51,7 @@ class Scanner
     public void stop()
     {
         timer.cancel();
+        for (ScanList list : scan_lists.values())
+            list.cancel();
     }
 }

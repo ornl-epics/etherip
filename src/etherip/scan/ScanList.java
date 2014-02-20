@@ -20,8 +20,10 @@ class ScanList extends TimerTask
 {
     final private double period;
     final private Connection connection;
-
+    
     final private TagList tags = new TagList();
+   
+    private volatile boolean aborted = false;
     
     public ScanList(final double period, final Connection connection)
     {
@@ -44,7 +46,16 @@ class ScanList extends TimerTask
         }
         catch (Exception ex)
         {
+            if (aborted)
+                return;
             logger.log(Level.WARNING, "Scan list " + period + " sec process failed", ex);
         }
+    }
+    
+    @Override
+    public boolean cancel()
+    {
+        aborted = true;
+        return super.cancel();
     }
 }

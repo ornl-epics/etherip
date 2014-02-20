@@ -68,7 +68,7 @@ public class ScanListTest implements TagListener
     @Test
     public void testScanListRead() throws Exception
     {
-        Logger.getLogger("").setLevel(Level.FINE);
+        Logger.getLogger("").setLevel(Level.CONFIG);
             
         final Scanner scanner = new Scanner(connection);
         final Tag tag1 = scanner.add(1.0, TestSettings.get("tag1"));
