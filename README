@@ -20,6 +20,16 @@ Like the C implementation, the Java code is based on
    specific to the ControlLogix 5000 series.
    It allows reading and writing tags on the controller.
 
+What this means:
+
+ * The code can read and write tags from AllenBradley Control Logix PLCs.
+
+ * There is generic EtherNet/IP code for reading attributes of control net objects.
+   You might be able to use that to access information on other types of
+   EtherNet/IP devices, but as in the Control Logix example you might
+   need details about additional, vendor-specific CIP service codes
+   to get at the useful data.
+ 
 See also the ICALEPCS 2001 paper "Interfacing the ControlLogix PLC over Ethernet/IP",
 http://accelconf.web.cern.ch/AccelConf/ica01/papers/THDT002.pdf
 
