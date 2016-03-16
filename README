@@ -5,7 +5,7 @@ A Java library for reading and writing tags on AllenBradley Control Logix or Com
 PLCs via the Ethernet/IP protocol (aka DeviceNet-over-Ethernet or CIP-over-Ethernet).
 
 This is a Java implementation of the same protocol that
-http://sourceforge.net/apps/trac/epics/wiki/EtherIP
+https://github.com/EPICSTools/ether_ip
 provides in C.
 Like the C implementation, the Java code is based on
 
