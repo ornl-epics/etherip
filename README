@@ -23,6 +23,8 @@ Like the C implementation, the Java code is based on
 What this means:
 
  * The code can read and write tags from AllenBradley Control Logix PLCs.
+   Works with older versions that had separate controller and ENET module
+   as well as L8x series that combines ENET module with controller.
 
  * There is generic EtherNet/IP code for reading attributes of control net objects.
    You might be able to use that to access information on other types of
@@ -33,7 +35,7 @@ What this means:
 See also the ICALEPCS 2001 paper "Interfacing the ControlLogix PLC over Ethernet/IP",
 http://accelconf.web.cern.ch/AccelConf/ica01/papers/THDT002.pdf
 
-The C implemetation also provides EPICS device support
+The C implementation also provides EPICS device support
 for IOCs on top of the basic protocol library.
 The Java implementation is currently only the basic read/write library
 with unit tests to demonstrate the functionality.
