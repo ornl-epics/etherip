@@ -19,7 +19,7 @@ import etherip.types.CNService;
 public class CIPReadDataProtocol extends ProtocolAdapter
 {
     private CIPData data;
-    
+
     @Override
     public int getRequestSize()
     {
@@ -40,7 +40,8 @@ public class CIPReadDataProtocol extends ProtocolAdapter
         if (available <= 0)
         {
             data = null;
-            log.append("USINT type, data        : - nothing-\n");
+            if (log != null)
+                log.append("USINT type, data        : - nothing-\n");
             return;
         }
         final CIPData.Type type = CIPData.Type.forCode(buf.getShort());
@@ -50,7 +51,7 @@ public class CIPReadDataProtocol extends ProtocolAdapter
         if (log != null)
             log.append("USINT type, data        : ").append(data).append("\n");
     }
-    
+
     final public CIPData getData()
     {
         return data;
