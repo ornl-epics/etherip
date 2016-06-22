@@ -16,7 +16,7 @@ Like the C implementation, the Java code is based on
    It allows reading the device info like vendor code
    and serial number from the AllenBradley Control Logix ENET module.
  * Allen Bradley document 1756-RM005A-EN-E.pdf,
-   "Logix5000 Data Access", which descrives the CIP service codes
+   "Logix5000 Data Access", which describes the CIP service codes
    specific to the ControlLogix 5000 series.
    It allows reading and writing tags on the controller.
 
