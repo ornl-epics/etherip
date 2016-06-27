@@ -19,6 +19,8 @@ Like the C implementation, the Java code is based on
    "Logix5000 Data Access", which describes the CIP service codes
    specific to the ControlLogix 5000 series.
    It allows reading and writing tags on the controller.
+   A newer version seems to be here:
+   http://literature.rockwellautomation.com/idc/groups/literature/documents/pm/1756-pm020_-en-p.pdf
 
 What this means:
 
