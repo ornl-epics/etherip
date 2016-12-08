@@ -65,7 +65,7 @@ public class ScanListTest implements TagListener
         errors.countDown();
     }
 
-    @Test
+//    @Test
     public void testScanListRead() throws Exception
     {
         Logger.getLogger("").setLevel(Level.CONFIG);
@@ -86,7 +86,7 @@ public class ScanListTest implements TagListener
         tag1.removeListener(this);
     }
 
-    @Test(timeout=20000)
+//    @Test(timeout=20000)
     public void testScanListWrite() throws Exception
     {
         Logger.getLogger("").setLevel(Level.CONFIG);
@@ -123,7 +123,7 @@ public class ScanListTest implements TagListener
         tag1.removeListener(this);
     }
     
-    @Test
+//    @Test
     public void testScanListError() throws Exception
     {
         final Scanner scanner = new Scanner(connection);
