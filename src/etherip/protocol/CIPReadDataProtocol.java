@@ -15,10 +15,29 @@ import etherip.types.CNService;
 /** Protocol body for {@link CNService#CIP_ReadData}
  *
  *  @author Kay Kasemir
+ *
  */
 public class CIPReadDataProtocol extends ProtocolAdapter
 {
     private CIPData data;
+    private final short count;
+
+
+    /**
+     * Create a read protocol message that requests a single element
+     */
+    public CIPReadDataProtocol() {
+        count = 1;
+    }
+
+
+    /**
+     * Create a read protocol message that reqeusts one or more elements if request is an array
+     * @param count
+     */
+    public CIPReadDataProtocol(short count) {
+        this.count = count;
+    }
 
     @Override
     public int getRequestSize()
@@ -29,7 +48,7 @@ public class CIPReadDataProtocol extends ProtocolAdapter
     @Override
     public void encode(final ByteBuffer buf, final StringBuilder log)
     {
-        buf.putShort((short) 1); // elements
+        buf.putShort(count); // elements
         if (log != null)
             log.append("USINT elements          : 1\n");
     }
