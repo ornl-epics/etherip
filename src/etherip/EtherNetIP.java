@@ -38,7 +38,7 @@ import etherip.types.CNService;
  */
 public class EtherNetIP implements AutoCloseable
 {
-    final public static String version = "1.0";
+    final public static String version = "1.1";
     
 	final public static Logger logger = Logger.getLogger(EtherNetIP.class.getName());
 
