@@ -9,6 +9,9 @@ package etherip.types;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import etherip.protocol.Connection;
 
@@ -46,13 +49,23 @@ final public class CIPData
         
         final private short code;
         final private int element_size;
-        
+
+        final private static Map<Short, Type> reverse;
+
+        static {
+            reverse = new HashMap<>();
+            for (Type t : EnumSet.allOf(Type.class)) {
+                reverse.put(t.code, t);
+            }
+        }
+
         public static Type forCode(final short code) throws Exception
         {
-            for (Type type : values())
-                if (type.code == code)
-                    return type;
-            throw new Exception("Unknown CIP type code 0x" + Integer.toHexString(code));
+            Type t = reverse.get(code);
+            if (reverse == null) {
+                throw new Exception("Unknown CIP type code 0x" + Integer.toHexString(code));
+            }
+            return t;
         }
         
         private Type(final int code, final int element_size)
