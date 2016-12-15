@@ -21,20 +21,34 @@ import java.util.regex.Pattern;
  */
 public class CNSymbolPath extends CNPath
 {
-	class PathAndIndex{
+	class PathAndIndex
+	{
 		private String path;
 		private Integer index;
-		public PathAndIndex(String path, Integer index) {
+
+		public PathAndIndex(String path, Integer index)
+		{
 			this.path = path;
 			this.index = index;
 		}
-		public String getPath() {
+
+		public String getPath()
+		{
 			return path;
 		}
-		public Integer getIndex() {
+
+		public Integer getIndex()
+		{
 			return index;
 		}
 
+		@Override
+		public String toString()
+		{
+		    if (index == null)
+		        return path;
+		    return path + "(" + index + ")";
+		}
 	};
 
 	private final Pattern PATTERN_BRACKETS = Pattern.compile("\\[(\\d+)\\]");
@@ -78,7 +92,8 @@ public class CNSymbolPath extends CNPath
 	{
 		// spec 4 p.21: "ANSI extended symbol segment"
 		buf.put((byte) (getRequestSize() / 2));
-		for(PathAndIndex pi:paths){
+		for(PathAndIndex pi:paths)
+		{
 			String s = pi.getPath();
 			buf.put((byte) 0x91);
 			buf.put((byte) s.length());
@@ -86,13 +101,13 @@ public class CNSymbolPath extends CNPath
 			if (needPad(s))
 				buf.put((byte) 0);
 			Integer index = pi.getIndex();
-			if(index!=null){
-				//Path Segment 28, from wireshark
+			if (index!=null)
+			{
+				// Path Segment 28, from wireshark
 				buf.put((byte) 0x28);
 				buf.put(index.byteValue());
 			}
 		}
-
 	}
 
 	/** @return Is path of odd length, requiring a pad byte? */
@@ -101,4 +116,17 @@ public class CNSymbolPath extends CNPath
 		// Findbugs: x%2==1 fails for negative numbers
 		return (s.length() % 2) != 0;
 	}
+
+    @Override
+    public String toString()
+    {
+        final StringBuilder buf = new StringBuilder();
+        for (PathAndIndex pi:paths)
+        {
+            if (buf.length() > 0)
+                buf.append(", ");
+            buf.append(pi);
+        }
+        return buf.toString();
+    }
 }
