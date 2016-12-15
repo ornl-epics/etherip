@@ -18,12 +18,23 @@ public class MRChipReadProtocol extends MessageRouterProtocol
 {
     final private CIPReadDataProtocol reader;
 	
-    /** Initialize
+    /** Initialize.  Note that if trying to read an arary this will only return the first item.
 	 *  @param tag Name of tag to read
 	 */
     public MRChipReadProtocol(final String tag)
     {
         this(tag, new CIPReadDataProtocol());
+    }
+
+
+    /**
+     * Initialize.  Only use this constructur if retrieving an array.
+     * @param tag      Name of tag to read
+     * @param count    Number of elements to read (if it is an array)
+     */
+    public MRChipReadProtocol(final String tag, short count)
+    {
+        this(tag, new CIPReadDataProtocol(count));
     }
 
     /** Initialize

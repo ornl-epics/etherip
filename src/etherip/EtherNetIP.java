@@ -141,10 +141,15 @@ public class EtherNetIP implements AutoCloseable
 		connection.execute(encap);
 	    return attr_proto.getValue();
     }
-	
+
 	public CIPData readTag(final String tag) throws Exception
 	{
-		final MRChipReadProtocol cip_read = new MRChipReadProtocol(tag);
+		return readTag(tag, (short) 1);
+	}
+
+	public CIPData readTag(final String tag, short count) throws Exception
+	{
+		final MRChipReadProtocol cip_read = new MRChipReadProtocol(tag, count);
 		final Encapsulation encap =
 			new Encapsulation(SendRRData, connection.getSession(),
 				new SendRRDataProtocol(
