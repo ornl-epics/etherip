@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import etherip.types.CIPData;
@@ -31,7 +30,7 @@ public class EtherIPDemo
 	{
 		TestSettings.logAll();
 		Logger.getLogger("").setLevel(Level.ALL);
-        Logger.getLogger("").setLevel(Level.WARNING);
+        //Logger.getLogger("").setLevel(Level.WARNING);
 	}
 
 	@Test
@@ -148,7 +147,6 @@ public class EtherIPDemo
     }
 
     @Test
-    @Ignore
     public void testMultiRead() throws Exception
     {
         try
@@ -159,9 +157,18 @@ public class EtherIPDemo
             plc.connect();
 
             System.out.println("\n*\n* Multi read:\n*\n");
-            plc.readTags(TestSettings.get("float_tag"),
-                         TestSettings.get("bool_tag"),
-                         TestSettings.get("string_tag"));
+            final String[] tags = new String[]
+            {
+                    TestSettings.get("float_tag"),
+                    TestSettings.get("bool_tag"),
+                    TestSettings.get("string_tag")
+            };
+            final CIPData[] results = plc.readTags(tags);
+            assertThat(results, not(nullValue()));
+            assertThat(results.length, equalTo(tags.length));
+
+            for (int i=0; i<results.length; ++i)
+                System.out.println(tags[i] + " = " + results[i]);
         }
     }
 }

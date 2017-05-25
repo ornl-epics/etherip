@@ -179,10 +179,10 @@ public class EtherNetIP implements AutoCloseable
 
     /** Read multiple scalar tags in one network transaction
      *  @param tags Tag names
-     *  @return Current value of the tag
+     *  @return Current values of the tags
      *  @throws Exception on error
      */
-	public CIPData readTags(final String... tags) throws Exception
+	public CIPData[] readTags(final String... tags) throws Exception
 	{
 	    final MRChipReadProtocol[] reads = new MRChipReadProtocol[tags.length];
 	    for (int i=0; i<reads.length; ++i)
@@ -196,8 +196,11 @@ public class EtherNetIP implements AutoCloseable
                             new CIPMultiRequestProtocol(reads)))));
 	    connection.execute(encap);
 
-	    // TODO Nothing decodes the individual responses
-	    throw new Exception("Decoding of response to CIP_MultiRequest has not been implemented");
+	    final CIPData[] results = new CIPData[reads.length];
+        for (int i=0; i<results.length; ++i)
+            results[i] = reads[i].getData();
+
+        return results;
     }
 
 	/** Write a tag

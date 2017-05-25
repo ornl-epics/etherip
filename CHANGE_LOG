@@ -4,7 +4,8 @@ Changes
 Version number is in EtherNetIP.version
 
 * 1.2 - 2017/05/25
-Fix: Support reading and writing STRING tags (#12)
+Fix: Support reading and writing STRING tags (#12).
+     Implement EtherNetIP#readTags()
 
 * 1.1 - 2016/12/15
 Fix: Handle path tags like "array[2].element" (#8)
