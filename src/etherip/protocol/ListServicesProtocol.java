@@ -15,14 +15,15 @@ import etherip.util.Hexdump;
  *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class ListServicesProtocol extends ProtocolAdapter
 {
-	/** One Service that the ListServices command obtains from the device */ 
+	/** One Service that the ListServices command obtains from the device */
 	public static class Service
 	{
     	final private short type, length, version, flags;
     	final private String name;
-		
+
     	public Service(final short type, final short length, final short version,
     			final short flags, final byte[] name)
         {
@@ -37,7 +38,7 @@ public class ListServicesProtocol extends ProtocolAdapter
     	{
     		return name;
     	}
-    	
+
 		@Override
         public String toString()
         {
@@ -50,9 +51,9 @@ public class ListServicesProtocol extends ProtocolAdapter
 			return msg.toString();
         }
 	};
-	
+
 	private Service[] services;
-		
+
 	@Override
 	public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
 	{
@@ -72,14 +73,14 @@ public class ListServicesProtocol extends ProtocolAdapter
 			final short flags = buf.getShort();
 			final byte[] name = new byte[length - 4];
 			buf.get(name);
-			
+
 			final Service service = new Service(type, length, version, flags, name);
 			if (log != null)
 				log.append("Service ").append(i).append(":\n").append(service.toString()).append("\n");
 			services[i] = service;
 		}
 	}
-	
+
 	/** @return {@link Service}s supported by device */
 	final public Service[] getServices()
 	{

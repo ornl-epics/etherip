@@ -7,6 +7,7 @@
  *******************************************************************************/
 package etherip.types;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -21,6 +22,7 @@ import etherip.util.Hexdump;
 /** JUnit test of {@link CIPData}
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class CIPDataTest
 {
 	@Test
@@ -32,16 +34,16 @@ public class CIPDataTest
 		assertThat(CIPData.Type.REAL, equalTo(data.getType()));
 		assertThat(1, equalTo(data.getElementCount()));
         assertThat(data.toString(), equalTo("CIP_REAL (0x00CA): [3.1416]"));
-		
+
         assertThat(true, equalTo(data.isNumeric()));
         assertThat("3.1416", equalTo(data.getNumber(0).toString()));
-        
+
         // Encode
         final ByteBuffer buf = TestSettings.getBuffer();
         data.encode(buf);
         buf.flip();
         assertThat(Hexdump.toHex(buf).trim(), equalTo("0000 - CA 00 01 00 F9 0F 49 40"));
-        
+
         // Modify
         data.set(0, 42.0);
         assertThat(data.toString(), equalTo("CIP_REAL (0x00CA): [42.0]"));
@@ -58,9 +60,10 @@ public class CIPDataTest
         final String txt = value.getString();
         System.out.println(txt);
         assertThat(txt, equalTo("Hello"));
-        assertThat(value.toString(), equalTo("CIP_STRUCT (0x02A0): 'Hello'"));
+        assertThat(value.toString(), containsString("CIP_STRUCT"));
+        assertThat(value.toString(), containsString("STRING"));
     }
-    
+
     @Test
     public void testCreateType() throws Exception
     {

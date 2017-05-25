@@ -36,10 +36,11 @@ import etherip.types.CNService;
 /** API for communicating via EtherNet/IP
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class EtherNetIP implements AutoCloseable
 {
-    final public static String version = "1.1";
-    
+    final public static String version = "1.2";
+
 	final public static Logger logger = Logger.getLogger(EtherNetIP.class.getName());
 
 	final private String address;
@@ -56,7 +57,7 @@ public class EtherNetIP implements AutoCloseable
 		this.address = address;
 		this.slot = slot;
 	}
-	
+
 	/** Connect to device, register session, obtain basic info
 	 *  @throws Exception on error
 	 */
@@ -67,15 +68,19 @@ public class EtherNetIP implements AutoCloseable
 		registerSession();
 		getDeviceInfo();
 	}
-	
+
 	/** List supported services
+	 *
+	 *  <p>Queries PLC for supported services.
+	 *  Logs them and checks for the required "Communications" service.
+	 *
 	 *  @throws Exception on error getting services, or when expected service not supported
 	 */
-	private void listServices() throws Exception
+    private void listServices() throws Exception
     {
         final ListServices list_services = new ListServices();
 		connection.execute(list_services);
-		
+
 		final Service[] services = list_services.getServices();
 		if (services == null  ||  services.length < 1)
 			throw new Exception("Device does not support EtherIP services");
@@ -142,11 +147,22 @@ public class EtherNetIP implements AutoCloseable
 	    return attr_proto.getValue();
     }
 
+	/** Read a single scalar tag
+	 *  @param tag Name of tag
+	 *  @return Current value of the tag
+	 *  @throws Exception on error
+	 */
 	public CIPData readTag(final String tag) throws Exception
 	{
 		return readTag(tag, (short) 1);
 	}
 
+    /** Read a single array tag
+     *  @param tag Name of tag
+     *  @param count Number of array elements to read
+     *  @return Current value of the tag
+     *  @throws Exception on error
+     */
 	public CIPData readTag(final String tag, short count) throws Exception
 	{
 		final MRChipReadProtocol cip_read = new MRChipReadProtocol(tag, count);
@@ -156,17 +172,22 @@ public class EtherNetIP implements AutoCloseable
 					new UnconnectedSendProtocol(slot,
 					    cip_read)));
 		connection.execute(encap);
-		
+
 		return cip_read.getData();
 	}
 
-	
+
+    /** Read multiple scalar tags in one network transaction
+     *  @param tags Tag names
+     *  @return Current value of the tag
+     *  @throws Exception on error
+     */
 	public CIPData readTags(final String... tags) throws Exception
 	{
 	    final MRChipReadProtocol[] reads = new MRChipReadProtocol[tags.length];
 	    for (int i=0; i<reads.length; ++i)
 	        reads[i] = new MRChipReadProtocol(tags[i]);
-	            
+
 	    final Encapsulation encap =
             new Encapsulation(SendRRData, connection.getSession(),
                 new SendRRDataProtocol(
@@ -174,12 +195,16 @@ public class EtherNetIP implements AutoCloseable
                         new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
                             new CIPMultiRequestProtocol(reads)))));
 	    connection.execute(encap);
-	        
+
 	    // TODO Nothing decodes the individual responses
-	    return null;
+	    throw new Exception("Decoding of response to CIP_MultiRequest has not been implemented");
     }
 
-	
+	/** Write a tag
+	 *  @param tag Tag name
+	 *  @param value Value to write
+	 *  @throws Exception on error
+	 */
 	public void writeTag(final String tag, final CIPData value) throws Exception
 	{
 	    final MRChipWriteProtocol cip_write = new MRChipWriteProtocol(tag, value);
@@ -192,6 +217,11 @@ public class EtherNetIP implements AutoCloseable
         connection.execute(encap);
     }
 
+	/** Write multiple tags in one network transaction
+	 *  @param tags Tag names to write
+	 *  @param values Values to write
+	 *  @throws Exception on error
+	 */
 	public void writeTags(final String[] tags, final CIPData[] values) throws Exception
     {
 	    if (tags.length != values.length)
@@ -224,7 +254,7 @@ public class EtherNetIP implements AutoCloseable
 			logger.log(Level.WARNING, "Error un-registering session", ex);
 		}
 	}
-	
+
 	/** Close connection to device */
 	@Override
     public void close() throws Exception
@@ -235,7 +265,7 @@ public class EtherNetIP implements AutoCloseable
 			connection.close();
 		}
 	}
-	
+
 	/** @return String representation for debugging */
 	@Override
     public String toString()

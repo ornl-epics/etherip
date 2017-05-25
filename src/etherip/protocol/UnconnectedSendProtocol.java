@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 /** Protocol PDU that uses CM_Unconnected_Send
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class UnconnectedSendProtocol extends ProtocolAdapter
 {
 	final private ProtocolEncoder encoder;
@@ -41,17 +42,17 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
 
 	/** {@inheritDoc} */
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
     	encoder.encode(buf, log);
-    	
+
     	final byte tick_time = (byte) 10;
     	final byte ticks = (byte) 240;
         buf.put(tick_time);
         buf.put(ticks);
         final short body_size = (short) body.getRequestSize();
         buf.putShort(body_size);
-        
+
         final boolean pad = needPad();
 
         if (log != null)
@@ -62,11 +63,11 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
         	log.append("UINT message size       : ").append(body.getRequestSize()).append("\n");
         	log.append("  \\/\\/\\/ embedded message \\/\\/\\/ (").append(body_size).append(" bytes)\n");
         }
-        
+
         body.encode(buf, log);
         if (pad)
             buf.put((byte) 0);
-        
+
         buf.put((byte) 1); // Path size
         buf.put((byte) 0); // reserved
         buf.put((byte) 1); // Port 1 = backplane
@@ -81,7 +82,7 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
         	log.append("USINT port 1, slot ").append(slot).append("\n");
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
@@ -91,7 +92,7 @@ public class UnconnectedSendProtocol extends ProtocolAdapter
     	// so pass decoding on to the body.
     	body.decode(buf, available, log);
     }
-    
+
     /** @return Is path of odd length, requiring a pad byte? */
     private boolean needPad()
     {

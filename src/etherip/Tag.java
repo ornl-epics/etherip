@@ -13,12 +13,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import etherip.types.CIPData;
 
 /** Tag on the PLC
- * 
+ *
  *  <p>Initially, the data for the tag is read to get the original value
  *  and determine the data type.
  *  From then on, tag can be written.
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class Tag
 {
     public enum State
@@ -30,7 +31,7 @@ public class Tag
         /** Value of tag is being written to device right now */
         WRITING
     };
-    
+
     // SYNC Notes:
     //
     // Tag is accessed by TagList which processes the read/write traffic.
@@ -82,19 +83,19 @@ public class Tag
     // TagList finishes writing the first value (A or B)
     // TagList starts writing the value B
     // TagList finishes writing the value B
-    
+
     /** Tag name */
     final private String name;
-    
+
     /** Current value, or the value to be written */
     private CIPData data = null;
-    
+
     /** State */
     private State state = State.READING;
-    
+
     /** Listeners */
     final private List<TagListener> listeners = new CopyOnWriteArrayList<>();
-    
+
     /** Initialize
      *  @param name Tag name
      */
@@ -102,13 +103,13 @@ public class Tag
     {
         this.name = name;
     }
-    
+
     /** @return Tag name */
     public String getName()
     {
         return name;
     }
-    
+
     /** @param listener Listener to add */
     public void addListener(final TagListener listener)
     {
@@ -129,13 +130,13 @@ public class Tag
         if (! listeners.remove(listener))
             throw new IllegalStateException("Unknown listener");
     }
-    
+
     /** @return Tag state */
     public synchronized State getState()
     {
         return state;
     }
-    
+
     /** Update state tag
      *  <p>To be called by {@link TagList}
      *  @param state {@link State}

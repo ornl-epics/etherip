@@ -15,6 +15,7 @@ import etherip.types.CNService;
 /** Message Router PDU (Protocol Data Unit)
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class MessageRouterProtocol extends ProtocolAdapter
 {
 	final private CNService service;
@@ -46,7 +47,7 @@ public class MessageRouterProtocol extends ProtocolAdapter
 
 	/** {@inheritDoc} */
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
         buf.put((byte)service.getCode());
         path.encode(buf, log);
@@ -56,17 +57,17 @@ public class MessageRouterProtocol extends ProtocolAdapter
         	log.append("USINT service           : ").append(service).append("\n");
         	log.append("USINT path              : ").append(path).append("\n");
         }
-        
+
         body.encode(buf, log);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int getResponseSize(final ByteBuffer buf) throws Exception
     {
     	throw new IllegalStateException("Unknown response size");
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
@@ -77,14 +78,14 @@ public class MessageRouterProtocol extends ProtocolAdapter
     		throw new Exception("Received reply with unknown service code 0x" + Integer.toHexString(service_code));
     	if (! reply.isReply())
     		throw new Exception("Expected reply, got " + reply);
-    	
+
     	final int reserved = buf.get();
     	status = buf.get();
     	final int ext_status_size = buf.get();
 		ext_status = new int[ext_status_size];
 		for (int i=0; i<ext_status_size; ++i)
 			ext_status[i] = buf.getShort();
-    	
+
     	//  Followed by data...
     	if (log != null)
         {
@@ -99,16 +100,16 @@ public class MessageRouterProtocol extends ProtocolAdapter
         final CNService expected_reply = service.getReply();
         if (expected_reply != null  &&  expected_reply!= reply)
             throw new Exception("Expected " + expected_reply + ", got " + reply);
-    	
+
     	body.decode(buf, available - 4 - 2*ext_status_size, log);
     }
-    
+
     /** @return Status code of response */
     public int getStatus()
     {
     	return status;
     }
-    
+
     /** @return Status of response */
     public String decodeStatus()
     {
@@ -129,13 +130,13 @@ public class MessageRouterProtocol extends ProtocolAdapter
     	}
     	return "<unknown>";
     }
-    
+
     /** @return Extended status codes of response */
     public int[] getExtendedStatus()
     {
     	return ext_status;
     }
-    
+
     /** @param ext_status Extended status codes of response to decode
      *  @return Status description
      */

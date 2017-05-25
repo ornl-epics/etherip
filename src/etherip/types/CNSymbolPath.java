@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  *  <p><code>CNPath path = Symbol.name("my_tag")</code>
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class CNSymbolPath extends CNPath
 {
 	class PathAndIndex
@@ -42,7 +43,7 @@ public class CNSymbolPath extends CNPath
 			return index;
 		}
 
-		@Override
+        @Override
 		public String toString()
 		{
 		    if (index == null)
@@ -78,7 +79,8 @@ public class CNSymbolPath extends CNPath
 	public int getRequestSize()
 	{   // End of string is padded if length is odd
 		int count = 0;
-		for(PathAndIndex s:paths){
+		for(PathAndIndex s:paths)
+		{
 			count += 2 + s.getPath().length() + (needPad(s.getPath()) ? 1 : 0);
 			if(s.getIndex()!=null)
 				count += 2;
@@ -92,7 +94,7 @@ public class CNSymbolPath extends CNPath
 	{
 		// spec 4 p.21: "ANSI extended symbol segment"
 		buf.put((byte) (getRequestSize() / 2));
-		for(PathAndIndex pi:paths)
+		for(PathAndIndex pi : paths)
 		{
 			String s = pi.getPath();
 			buf.put((byte) 0x91);
@@ -121,11 +123,14 @@ public class CNSymbolPath extends CNPath
     public String toString()
     {
         final StringBuilder buf = new StringBuilder();
-        for (PathAndIndex pi:paths)
+        buf.append("Path Symbol(0x91) ");
+        for (PathAndIndex pi : paths)
         {
-            if (buf.length() > 0)
+            if (buf.length() > 18)
                 buf.append(", ");
-            buf.append(pi);
+            buf.append('\'').append(pi).append('\'');
+            if (needPad(pi.getPath()))
+                buf.append(", 0x00");
         }
         return buf.toString();
     }

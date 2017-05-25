@@ -16,14 +16,27 @@ import java.util.Map;
 import etherip.protocol.Connection;
 
 /** ControlNet data types
- * 
+ *
  *  <p>Spec. 5 p.3
- * 
+ *
  *  <p>Raw CIP data is kept in a <code>byte[]</code>.
  *  This class can decode the data or manipulate it.
- *  
+ *
+ *  <p>Note that all operations that 'set' the value
+ *  require that the CIPData already holds the respective
+ *  type.
+ *  For example, setting a CIPData of type REAL to an
+ *  integer value will still result in a REAL,
+ *  not change the type to INT.
+ *  Setting a CIPData of type INT to a floating point
+ *  value will truncate the floating point to an integer,
+ *  since the CIPData remains an INT.
+ *  Only CIPData with a string-containing STRUCT can
+ *  be set to a string.
+ *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 final public class CIPData
 {
     public static enum Type
@@ -34,9 +47,9 @@ final public class CIPData
         DINT(0x00C4, 4),
         REAL(0x00CA, 4),
         BITS(0x00D3, 4),
-        // Order of enums matter: BITS is the last numeric type (not-string) 
+        // Order of enums matter: BITS is the last numeric type (not-string)
         STRUCT(0x02A0, 0),
-        
+
         /** Experimental:
          *  The ENET doc just shows several structures
          *  for TIMER, COUNTER, CONTROL and indicates that
@@ -46,7 +59,7 @@ final public class CIPData
          *  followed by DINT length, characters and more zeroes
          */
         STRUCT_STRING(0x0FCE, 0);
-        
+
         final private short code;
         final private int element_size;
 
@@ -67,29 +80,29 @@ final public class CIPData
             }
             return t;
         }
-        
+
         private Type(final int code, final int element_size)
         {
             this.code = (short) code;
             this.element_size = element_size;
         }
-        
+
         @Override
         final public String toString()
         {
             return name() + String.format(" (0x%04X)", code);
         }
     };
-    
+
     /** Data type */
     final private Type type;
-    
+
     /** Number of elements (i.e. number of array elements, not bytes) */
     final private short elements;
-    
+
     /** Raw data, not including type code or element count */
     final private ByteBuffer data;
-    
+
     /** Initialize empty CIP data
      *  @param type Data {@link Type}
      *  @param elements Number of elements
@@ -153,13 +166,13 @@ final public class CIPData
             throw new Exception("Type " + type + " not handled");
         }
     }
-            
+
     /** @return CIP data type */
     final public Type getType()
     {
         return type;
     }
-    
+
     /** @return Number of elements (numbers in array).
      *          Always 1 for String
      */
@@ -173,7 +186,7 @@ final public class CIPData
     {
         return type.ordinal() <= Type.BITS.ordinal();
     }
-    
+
     /** Read CIP data as number
      *  @param index Element index 0, 1, ...
      *  @return Numeric value of requested element
@@ -198,7 +211,7 @@ final public class CIPData
             throw new Exception("Cannot retrieve Number from " + type);
         }
     }
-    
+
     /** Read CIP data as string
      *  @return {@link String}
      *  @throws Exception if data does not contain a string
@@ -217,7 +230,7 @@ final public class CIPData
             chars[i] = data.get(6 + i);
         return new String(chars);
     }
-    
+
     /** Set CIP data
      *  @param index Element index 0, 1, ...
      *  @param value Numeric value to write to that element
@@ -246,24 +259,69 @@ final public class CIPData
             throw new Exception("Cannot set type " + type + " to a number");
         }
     }
-    
+
+    /** Write CIP data as string
+     *  @param text {@link String}
+     *  @throws Exception if data does not contain a string
+     */
+    final synchronized public void setString(final String text) throws Exception
+    {
+        if (type != Type.STRUCT)
+            throw new Exception("Type " + type + " does not contain string");
+        data.putShort(0, Type.STRUCT_STRING.code);
+
+        // Try to fit the text,
+        // but limit it to size of buffer,
+        // starting at the offset for the text
+        // (2 byte STRUCT_STRING, 4 byte length)
+        // and allow for the final '\0' byte
+        final int len = Math.min(text.length(),  data.capacity() - 6 - 1);
+        data.putInt(2, len);
+
+        final byte[] chars = text.getBytes();
+        for (int i=0; i<len; ++i)
+            data.put(6 + i, chars[i]);
+        data.put(6+len, (byte)0);
+    }
+
     /** @return size if bytes of the encoded data */
     final public int getEncodedSize()
     {
         // Type, Elements, raw data
         return 2 + 2 + data.capacity();
     }
-    
+
     /** Encode CIP data bytes into buffer
      *  @param buf {@link ByteBuffer} where data should be placed
+     *  @throws Exception on error
      */
-    final synchronized public void encode(final ByteBuffer buf)
+    final synchronized public void encode(final ByteBuffer buf) throws Exception
     {
         buf.putShort(type.code);
-        buf.putShort(elements);
-        buf.put(data.array());
+        // STRUCT already contains structure detail, elements etc.
+        // For other types, add the element count
+        if (type == Type.STRUCT)
+        {
+            data.clear();
+            final short struct_detail = data.getShort();
+            if (struct_detail != Type.STRUCT_STRING.code)
+                throw new Exception("Can only encode STRUCT_STRING, got 0x" + Integer.toHexString(struct_detail));
+            // The data buffer contains the string as _read_:
+            // STRUCT, STRUCT_STRING, length, chars.
+            // It needs to be written as
+            // STRUCT, STRUCT_STRING, _elements_, length, chars.
+            buf.putShort(struct_detail);
+            buf.putShort(elements);
+            // Copy length, chars from data into buf
+            buf.put(data);
+        }
+        else
+        {
+            buf.putShort(elements);
+            buf.put(data.array());
+        }
     }
-    
+
     /** @return String representation for debugging */
     @Override
     final synchronized public String toString()
@@ -323,11 +381,12 @@ final public class CIPData
             }
             if (el_type == Type.STRUCT_STRING)
             {
+                result.append(Type.STRUCT_STRING).append(" ");
                 final int len = buf.getInt();
                 final byte[] chars = new byte[len];
                 buf.get(chars);
                 final String value = new String(chars);
-                result.append("'").append(value).append("'");
+                result.append("'").append(value).append("', len " + len);
             }
             else
                 result.append("Structure element of type " + type);

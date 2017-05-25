@@ -10,11 +10,12 @@ package etherip.types;
 import etherip.protocol.ProtocolEncoder;
 
 /** Control Net Path
- * 
+ *
  *  <p>Example (with suitable static import):
  *  <p><code>CNPath path = Identity().instance(1).attr(7)</code>
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 abstract public class CNPath implements ProtocolEncoder
 {
 	// Objects, see Spec 10 p. 1, 13, 25
@@ -25,7 +26,7 @@ abstract public class CNPath implements ProtocolEncoder
 	{
 	    return new CNClassPath(0x01, "Identity");
 	}
-	
+
     /** Create path to MessageRouter object
      *  @return {@link CNClassPath}
      */
@@ -33,7 +34,7 @@ abstract public class CNPath implements ProtocolEncoder
 	{
 	    return new CNClassPath(0x02, "MessageRouter");
 	}
-	
+
     /** Create path to ConnectionManager object
      *  @return {@link CNPath}
      */
@@ -41,7 +42,7 @@ abstract public class CNPath implements ProtocolEncoder
 	{
 	    return new CNClassPath(0x06, "ConnectionManager");
 	}
-	
+
 	/** Create symbol path
 	 *  @param name Name of the tag to put into symbol path
 	 *  @return {@link CNPath}

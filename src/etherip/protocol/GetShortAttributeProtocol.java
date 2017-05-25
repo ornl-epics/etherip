@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 /** Decode a <code>short</code> attribute
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class GetShortAttributeProtocol extends ProtocolAdapter
 {
 	private short value;
@@ -24,7 +25,7 @@ public class GetShortAttributeProtocol extends ProtocolAdapter
 		if (log != null)
 			log.append("UINT value      : ").append(value).append("\n");
 	}
-	
+
 	/** @return Value read from response */
 	final public short getValue()
 	{

@@ -18,13 +18,14 @@ import etherip.TestSettings;
 /** JUnitDemo of {@link RegisterSession}
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class RegisterSessionDemo
 {
     @Test
     public void testRegisterSession() throws Exception
     {
     	TestSettings.logAll();
-    	
+
     	try
     	(
 			Connection connection = new Connection(TestSettings.get("plc"), TestSettings.getInt("slot"));
@@ -32,9 +33,9 @@ public class RegisterSessionDemo
 		{
     		final RegisterSession register = new RegisterSession();
     		connection.write(register);
-    		
+
     		assertThat(register.getSession(), equalTo(0));
-    		
+
     		connection.read(register);
     		System.out.println("Received session 0x" + Integer.toHexString(register.getSession()));
     		assertThat(register.getSession(), not(equalTo(0)));

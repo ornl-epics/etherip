@@ -23,7 +23,7 @@ public class ProtocolAdapter implements Protocol
 
 	/** {@inheritDoc} */
 	@Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
 		// NOP
     }

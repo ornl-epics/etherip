@@ -18,6 +18,7 @@ import etherip.util.Hexdump;
  *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class Encapsulation implements Protocol
 {
 	/** Byte size of encapsulation header */
@@ -66,12 +67,12 @@ public class Encapsulation implements Protocol
 	        return name() + String.format(" (0x%04X)", code);
 	    }
 	};
-	
-	
+
+
     final private Command command;
     private int session;
     final private Protocol body;
-    
+
     final private static byte[] context = new byte[] { 'F', 'u', 'n', 's', 't', 'u', 'f', 'f' };
 
     public Encapsulation(final Command command, final int session, final Protocol body)
@@ -90,7 +91,7 @@ public class Encapsulation implements Protocol
 
 	/** {@inheritDoc} */
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
     	final int status = 0;
         final int options = 0;
@@ -101,7 +102,7 @@ public class Encapsulation implements Protocol
         buf.putInt(status);
         buf.put(context);
         buf.putInt(options);
-        
+
         if (log != null)
         {
         	log.append("Encapsulation Header\n");
@@ -112,10 +113,10 @@ public class Encapsulation implements Protocol
         	log.append("USINT context[8]        : '").append(Hexdump.escapeChars(context)).append("'\n");
         	log.append(String.format("UDINT options           : 0x%08X\n", options));
         }
-        
+
         body.encode(buf, log);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int getResponseSize(final ByteBuffer buf) throws Exception
@@ -132,12 +133,12 @@ public class Encapsulation implements Protocol
     		throw new Exception("Received unknown command code " + command_code);
     	if (command != this.command)
     		throw new Exception("Received command " + command + " instead of " + this.command);
-    	
+
     	final short body_size = buf.getShort(2);
-    	
+
     	return 24 + body_size;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
@@ -149,9 +150,9 @@ public class Encapsulation implements Protocol
     		throw new Exception("Received unknown command code " + command_code);
     	if (command != this.command)
     		throw new Exception("Received command " + command + " instead of " + this.command);
-    	
+
     	final short body_size = buf.getShort();
-    	
+
     	final int session = buf.getInt();
     	if (session != this.session)
     	{
@@ -163,14 +164,14 @@ public class Encapsulation implements Protocol
     	}
 
     	final int status = buf.getInt();
-    	
+
     	final byte[] context = new byte[8];
     	buf.get(context);
     	if (!Arrays.equals(context, Encapsulation.context))
     		throw new Exception("Received context " + Hexdump.toAscii(context));
-    	
+
     	final int options = buf.getInt();
-    	
+
         if (log != null)
         {
         	log.append("Encapsulation Header\n");
@@ -181,15 +182,15 @@ public class Encapsulation implements Protocol
         	log.append("USINT context[8]        : '").append(Hexdump.escapeChars(context)).append("'\n");
         	log.append(String.format("UDINT options           : 0x%08X\n", options));
         }
-        
+
         if (status != 0)
         	throw new Exception(String.format("Received status 0x%08X (%s)\n", status, getStatusMessage(status)));
         if (buf.remaining() < body_size)
         	throw new Exception("Need " + body_size + " more bytes, have " + buf.remaining());
-        
+
         body.decode(buf, body_size, log);
     }
-    
+
     private String getStatusMessage(final int status)
     {
     	switch (status)

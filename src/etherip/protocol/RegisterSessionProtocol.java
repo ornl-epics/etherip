@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
  *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class RegisterSessionProtocol extends ProtocolAdapter
 {
 	@Override

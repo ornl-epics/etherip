@@ -12,16 +12,17 @@ import java.nio.ByteBuffer;
 import etherip.types.CNService;
 
 /** Protocol for {@link CNService#CIP_MultiRequest}
- *  
+ *
  *  <p>Handles several embedded {@link MessageRouterProtocol}
  *  read or write requests.
  *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class CIPMultiRequestProtocol extends ProtocolAdapter
 {
     final private MessageRouterProtocol[] services;
-    
+
     public CIPMultiRequestProtocol(final MessageRouterProtocol... services)
     {
         this.services = services;
@@ -39,16 +40,16 @@ public class CIPMultiRequestProtocol extends ProtocolAdapter
     }
 
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
         final int start = buf.position();
-        
+
         final short count = (short) services.length;
         // Encode service count
         buf.putShort(count);
         if (log != null)
             log.append("UINT count              : ").append(count).append("\n");
-        
+
         // Encode offsets to individual requests
         // Offset to 1st item:
         // 2 bytes for 'count', 2 bytes for each offset
@@ -61,7 +62,7 @@ public class CIPMultiRequestProtocol extends ProtocolAdapter
             // Next offset: After bytes for this request
             offset += services[i].getRequestSize();
         }
-        
+
         for (int i=0; i<count; ++i)
         {
             if (log != null)
@@ -100,21 +101,21 @@ public class CIPMultiRequestProtocol extends ProtocolAdapter
             if (log != null)
                 log.append("UINT offset             : ").append(offset[i]).append("\n");
         }
-        
+
         // Individual replies
         for (int i=0; i<count; ++i)
         {   // Track buffer offset from start
             final int off = buf.position() - start;
             if (off != offset[i])
                 throw new Exception("Expected response #" + (i+1) + " at offset " + offset[i] + ", not " + off);
-            
+
             // Determine length of this section
             final int section_length;
             if (i < count-1)
                 section_length = offset[i+1] - off;     // .. from offset table
             else
                 section_length = available - offset[i]; // .. from distance to end for last section
-        
+
             if (log != null)
                 log.append("    \\/\\/ response ").append(i+1).append(" \\/\\/ (offset ").append(off).append(" bytes)\n");
             services[i].decode(buf, section_length, log);

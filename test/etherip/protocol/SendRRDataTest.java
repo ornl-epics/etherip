@@ -7,26 +7,22 @@
  *******************************************************************************/
 package etherip.protocol;
 
-import static etherip.types.CNClassPath.Identity;
+import static etherip.types.CNPath.Identity;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.nio.ByteBuffer;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
 import etherip.TestSettings;
-import etherip.protocol.Encapsulation;
-import etherip.protocol.MessageRouterProtocol;
-import etherip.protocol.ProtocolAdapter;
-import etherip.protocol.SendRRDataProtocol;
 import etherip.protocol.Encapsulation.Command;
 import etherip.types.CNService;
 import etherip.util.Hexdump;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class SendRRDataTest
 {
 	final private ByteBuffer buf = TestSettings.getBuffer();
@@ -36,9 +32,9 @@ public class SendRRDataTest
 	{
 		TestSettings.logAll();
 	}
-	
+
 	@Test
-	public void testSendRRData()
+	public void testSendRRData() throws Exception
 	{
 		final MessageRouterProtocol pdu = new MessageRouterProtocol(CNService.Get_Attribute_Single, Identity().attr(7), new ProtocolAdapter());
 		final SendRRDataProtocol rr_data = new SendRRDataProtocol(pdu);
@@ -46,7 +42,7 @@ public class SendRRDataTest
 		final StringBuilder log = new StringBuilder();
 		encap.encode(buf, log);
 		System.out.println(log.toString());
-		
+
 		buf.flip();
 		String hex = Hexdump.toHexdump(buf);
 		System.out.println(hex);

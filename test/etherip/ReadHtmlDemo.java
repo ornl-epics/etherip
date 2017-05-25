@@ -17,6 +17,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import org.junit.Test;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class ReadHtmlDemo
 {
     public static final int TIMEOUT_MS = 2000;

@@ -13,33 +13,30 @@ import static org.junit.Assert.fail;
 
 import java.nio.ByteBuffer;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
 import etherip.TestSettings;
-import etherip.protocol.Connection;
-import etherip.protocol.Encapsulation;
-import etherip.protocol.ProtocolAdapter;
 import etherip.util.Hexdump;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class EncapsulationTest
 {
 	private int body_size = 0;
-	
+
 	@Before
 	public void setup()
-	{		
+	{
 		TestSettings.logAll();
 	}
-	
+
     @Test
     public void testCommand()
     {
         assertThat(Encapsulation.Command.ListServices.toString(), equalTo("ListServices (0x0004)"));
     }
-	
+
     @Test
     public void testEncode() throws Exception
     {
@@ -71,18 +68,18 @@ public class EncapsulationTest
 
         ByteBuffer receive = ByteBuffer.allocate(100);
         receive.order(Connection.BYTE_ORDER);
-        
+
         // On empty buffer, we need at least the encapsulation header
         assertThat(encap.getResponseSize(receive), equalTo(24));
-        
+
         // Use what was sent as the response
         receive = send;
         receive.position(receive.limit());
         receive.limit(receive.capacity());
         // Now that there's a length in the header, required response includes that
         assertThat(encap.getResponseSize(receive), equalTo(24 + 42));
-        
-        
+
+
         // Decode
         receive.flip();
         // Should detect that message is too short
@@ -101,10 +98,10 @@ public class EncapsulationTest
         receive.limit(receive.capacity());
         for (int i=0; i<42; ++i)
         	receive.put((byte) i);
-        
+
         receive.flip();
     	encap.decode(receive, receive.remaining(), null);
-        
+
         assertThat(body_size, equalTo(42));
     }
 }

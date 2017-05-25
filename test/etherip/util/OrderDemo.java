@@ -12,14 +12,12 @@ import static org.junit.Assert.assertTrue;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-
 import org.junit.Test;
-
-import etherip.util.Hexdump;
 
 /** JUnit demo of ByteBuffer orderring
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class OrderDemo
 {
     @Test

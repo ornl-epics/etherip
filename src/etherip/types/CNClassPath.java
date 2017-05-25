@@ -9,13 +9,13 @@ package etherip.types;
 
 import java.nio.ByteBuffer;
 
-
 /** Control Net Path for class, instance, attribute
- * 
+ *
  *  <p>Example (with suitable static import):
  *  <p><code>CNPath path = Identity.instance(1).attr(7)</code>
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class CNClassPath extends CNPath
 {
 	final private int class_code;
@@ -27,7 +27,7 @@ public class CNClassPath extends CNPath
 		this.class_code = class_code;
 		this.class_name = class_name;
 	}
-	
+
 	public CNClassPath instance(final int instance)
 	{
 		this.instance = instance;
@@ -39,7 +39,7 @@ public class CNClassPath extends CNPath
 		this.attr = attr;
 		return this;
 	}
-	
+
 	/** @return Path length in words */
     public byte getPathLength()
 	{
@@ -51,7 +51,7 @@ public class CNClassPath extends CNPath
     {   // Convert words into bytes
 	    return getPathLength() * 2;
     }
-    
+
     /** {@inheritDoc} */
 	@Override
     public void encode(final ByteBuffer buf, final StringBuilder log)
@@ -67,7 +67,7 @@ public class CNClassPath extends CNPath
 			buf.put((byte) attr);
 		}
 	}
-    
+
 	@Override
     public String toString()
 	{

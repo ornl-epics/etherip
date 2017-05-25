@@ -17,10 +17,11 @@ import java.util.logging.Logger;
 import etherip.protocol.Connection;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class TestSettings
 {
     final private static Properties settings = new Properties();
-    
+
     static
     {
         try
@@ -32,7 +33,7 @@ public class TestSettings
             ex.printStackTrace();
         }
     }
-    
+
     public static String get(final String name)
     {
         return settings.getProperty(name, "");
@@ -42,7 +43,7 @@ public class TestSettings
     {
         return Integer.parseInt(settings.getProperty(name, "0"));
     }
-    
+
     /** Configure logging */
 	public static void logAll()
     {
@@ -51,7 +52,7 @@ public class TestSettings
 		for (Handler handler : logger.getHandlers())
 			handler.setLevel(Level.FINEST);
     }
-	
+
 	/** @return {@link ByteBuffer} suitable for tests */
 	public static ByteBuffer getBuffer()
 	{

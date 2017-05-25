@@ -17,11 +17,12 @@ import etherip.protocol.Connection;
 import etherip.protocol.RegisterSession;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class TagListDemo
 {
 	@Before
 	public void setup()
-	{		
+	{
 		TestSettings.logAll();
 	}
 
@@ -37,22 +38,22 @@ public class TagListDemo
             final RegisterSession register = new RegisterSession();
             connection.execute(register);
             connection.setSession(register.getSession());
-            
+
 		    final TagList tags = new TagList();
 		    // Initial read
-		    tags.add(TestSettings.get("tag1"));
-		    tags.add(TestSettings.get("tag2"));
+		    tags.add(TestSettings.get("float_tag"));
+		    tags.add(TestSettings.get("string_tag"));
 		    tags.process(connection);
-		    
+
 		    // Write a tag
-		    tags.get(TestSettings.get("tag2")).setWriteValue(0, 17);
+		    tags.get(TestSettings.get("float_tag")).setWriteValue(0, 17);
             tags.process(connection);
 
             // Read
             tags.process(connection);
 
             // Write again
-            tags.get(TestSettings.get("tag2")).setWriteValue(0, 42);
+            tags.get(TestSettings.get("float_tag")).setWriteValue(0, 42);
             tags.process(connection);
 
             // Read

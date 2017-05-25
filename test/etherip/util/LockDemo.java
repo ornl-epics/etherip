@@ -17,10 +17,11 @@ import org.junit.Test;
 /** JUnit demo of locking, mostly meant to view in JProfiler
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class LockDemo
 {
     private volatile boolean run = true;
-    
+
     @Test
     public void testOrder() throws Exception
     {
@@ -52,11 +53,11 @@ public class LockDemo
                 }
             }
         };
-        
+
         final ExecutorService pool = Executors.newFixedThreadPool(2);
         pool.submit(task);
         pool.submit(task);
-        
+
         SECONDS.sleep(10);
         run = false;
         pool.awaitTermination(5, SECONDS);

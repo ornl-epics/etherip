@@ -12,12 +12,10 @@ import static org.junit.Assert.assertThat;
 
 import java.nio.ByteBuffer;
 
-
 import org.junit.Test;
 
-import etherip.util.Hexdump;
-
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class HexdumpTest
 {
     @Test

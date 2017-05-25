@@ -12,10 +12,11 @@ import java.nio.ByteBuffer;
 /** Decode a <code>String</code> attribute
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class GetStringAttributeProtocol extends ProtocolAdapter
 {
 	private String value;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
@@ -28,13 +29,13 @@ public class GetStringAttributeProtocol extends ProtocolAdapter
 		value = new String(raw);
 		if (log != null)
 			log.append("String value      : ").append(value).append("\n");
-		
+
 		// Skip remaining bytes
 		final int rest = available - 1 - len;
 		if (rest > 0)
 			buf.position(buf.position() + rest);
 	}
-	
+
 	/** @return Value read from response */
 	final public String getValue()
 	{

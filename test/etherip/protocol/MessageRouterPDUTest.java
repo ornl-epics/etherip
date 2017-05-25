@@ -14,17 +14,15 @@ import static org.junit.Assert.assertThat;
 
 import java.nio.ByteBuffer;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
 import etherip.TestSettings;
-import etherip.protocol.MessageRouterProtocol;
-import etherip.protocol.ProtocolAdapter;
 import etherip.types.CNService;
 import etherip.util.Hexdump;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class MessageRouterPDUTest
 {
 	private ByteBuffer buf = TestSettings.getBuffer();
@@ -34,20 +32,20 @@ public class MessageRouterPDUTest
 	{
 		TestSettings.logAll();
 	}
-	
-	@Test
+
+    @Test
 	public void testGetAttrib() throws Exception
 	{
 		final MessageRouterProtocol pdu = new MessageRouterProtocol(CNService.Get_Attribute_Single, Identity().instance(0x24).attr(0x06), new ProtocolAdapter());
 		assertThat(pdu.getRequestSize(), equalTo(8));
-		
+
 		StringBuilder log = new StringBuilder();
 		pdu.encode(buf, log);
 		System.out.println(log.toString());
 		buf.flip();
-		
+
 		assertThat(Hexdump.toCompactHexdump(buf), equalTo("0000 - 0E 03 20 01 24 24 30 06 - .. .$$0."));
-		
+
 		// Fake response
 		buf.clear();
 		buf.put(new byte[] { (byte)0x8E, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x49, (byte)0x2C, (byte)0x41, (byte)0x00 });
@@ -55,7 +53,7 @@ public class MessageRouterPDUTest
 		log = new StringBuilder();
 		pdu.decode(buf, buf.remaining(), log);
 		System.out.println(log.toString());
-		
+
 		System.out.print("USINT data           :");
 		while (buf.remaining() > 0)
 			System.out.format(" %02X",  buf.get());
@@ -87,7 +85,7 @@ public class MessageRouterPDUTest
 		pdu.encode(buf, log);
 		System.out.println(log.toString());
 		buf.flip();
-		
+
 		assertThat(Hexdump.toCompactHexdump(buf), equalTo("0000 - 4C 04 91 06 6B 61 79 5F 61 69 01 00 - L...kay_ai.."));
 
 		// Fake response
@@ -97,7 +95,7 @@ public class MessageRouterPDUTest
 		log = new StringBuilder();
 		pdu.decode(buf, buf.remaining(), log);
 		System.out.println(log.toString());
-		
+
 		System.out.print("USINT data           :");
 		while (buf.remaining() > 0)
 			System.out.format(" %02X",  buf.get());

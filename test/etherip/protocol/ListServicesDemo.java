@@ -20,13 +20,14 @@ import etherip.protocol.ListServicesProtocol.Service;
 /** JUnit demo of {@link ListServices}
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class ListServicesDemo
 {
     @Test
     public void testListServices() throws Exception
     {
     	TestSettings.logAll();
-    	
+
     	try
     	(
 			Connection connection = new Connection(TestSettings.get("plc"), TestSettings.getInt("slot"));
@@ -34,10 +35,10 @@ public class ListServicesDemo
 		{
     		final ListServices list_services = new ListServices();
     		connection.execute(list_services);
-    		
+
     		final Service[] services = list_services.getServices();
 			assertThat(services, not(nullValue()));
-			
+
 			// In principle, multiple services could be supported.
 			// So far have only seen this one
 			assertThat(services.length, equalTo(1));

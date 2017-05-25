@@ -19,29 +19,30 @@ import java.util.logging.Level;
 import etherip.util.Hexdump;
 
 /** Connection to EtherNet/IP device
- * 
+ *
  *  <p>Network connection as well as buffer and session info
  *  that's used for the duration of a connection.
- *  
+ *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class Connection implements AutoCloseable
 {
 	/** EtherIP uses little endian */
 	final public static ByteOrder BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 
 	final private static int BUFFER_SIZE = 600;
-	
+
 	final private int slot;
-	
+
 	final private AsynchronousSocketChannel channel;
 	final private ByteBuffer buffer;
-	
+
 	private int session = 0;
 
 	private long timeout_ms = 2000;
 	private int port = 0xAF12;
-	
+
 	/** Initialize
 	 *  @param address IP address of device
 	 *  @param slot Slot number 0, 1, .. of the controller within PLC crate
@@ -53,7 +54,7 @@ public class Connection implements AutoCloseable
 	    this.slot = slot;
         channel = AsynchronousSocketChannel.open();
 		channel.connect(new InetSocketAddress(address, port)).get(timeout_ms, MILLISECONDS);
-		
+
 		buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 		buffer.order(BYTE_ORDER);
 	}
@@ -81,7 +82,7 @@ public class Connection implements AutoCloseable
 	{
 		return buffer;
 	}
-	
+
 	@Override
 	public void close() throws Exception
 	{
@@ -99,12 +100,12 @@ public class Connection implements AutoCloseable
 		encoder.encode(buffer, log);
 		if (log != null)
 			logger.finer("Protocol Encoding\n" + log.toString());
-		
+
 		buffer.flip();
 		if (logger.isLoggable(Level.FINEST))
 			logger.log(Level.FINEST, "Data sent ({0} bytes):\n{1}",
 					new Object[] { buffer.remaining(), Hexdump.toHexdump(buffer) });
-		
+
 		int to_write = buffer.limit();
 		while (to_write > 0)
 		{
@@ -128,7 +129,7 @@ public class Connection implements AutoCloseable
 			channel.read(buffer).get(timeout_ms, MILLISECONDS);
 		}
 		while (buffer.position() < decoder.getResponseSize(buffer));
-		
+
 		// Prepare to decode
 		buffer.flip();
 

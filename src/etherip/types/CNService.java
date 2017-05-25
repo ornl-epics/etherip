@@ -8,11 +8,12 @@
 package etherip.types;
 
 /** CN Services
- * 
+ *
  *  <p>Spec 4, p.36
  *  @author Kay Kasemir
  */
-public enum CNService 
+@SuppressWarnings("nls")
+public enum CNService
 {
 	Get_Attribute_All(0x01),
     Get_Attribute_Single(0x0E), // Spec 6 p. 43
@@ -29,7 +30,7 @@ public enum CNService
     CM_Unconnected_Send_Reply(0x52 | 0x80);
 
 	final private byte code;
-	
+
 	private CNService(final int code)
 	{
 		this.code = (byte) code;
@@ -45,7 +46,7 @@ public enum CNService
 				return service;
 		return null;
 	}
-	
+
 	/** @return Code (ID) of service as used in protocol */
 	public byte getCode()
 	{
@@ -57,7 +58,7 @@ public enum CNService
 	{
 		return (code & 0x80) == 0x80;
 	}
-	
+
 	/** Obtain the 'reply' for a service
 	 *  @return {@link CNService} for the reply,
 	 *          or <code>null</code> if there is no known reply
@@ -71,7 +72,7 @@ public enum CNService
 			return null;
 		return forCode(code | 0x80);
 	}
-	
+
 	@Override
     public String toString()
 	{

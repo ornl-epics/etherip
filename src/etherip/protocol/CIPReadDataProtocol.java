@@ -17,6 +17,7 @@ import etherip.types.CNService;
  *  @author Kay Kasemir
  *
  */
+@SuppressWarnings("nls")
 public class CIPReadDataProtocol extends ProtocolAdapter
 {
     private CIPData data;

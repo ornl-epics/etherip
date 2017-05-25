@@ -8,6 +8,7 @@
 package etherip.protocol;
 
 import static etherip.types.CNPath.Symbol;
+
 import etherip.types.CIPData;
 import etherip.types.CNService;
 
@@ -17,22 +18,21 @@ import etherip.types.CNService;
 public class MRChipReadProtocol extends MessageRouterProtocol
 {
     final private CIPReadDataProtocol reader;
-	
-    /** Initialize.  Note that if trying to read an arary this will only return the first item.
+
+    /** Initialize.  Note that if trying to read an array this will only return the first item.
 	 *  @param tag Name of tag to read
 	 */
     public MRChipReadProtocol(final String tag)
     {
-        this(tag, new CIPReadDataProtocol());
+        this(tag, (short)1);
     }
 
 
-    /**
-     * Initialize.  Only use this constructur if retrieving an array.
-     * @param tag      Name of tag to read
-     * @param count    Number of elements to read (if it is an array)
+    /** Initialize.  Use this constructor to retrieve an array.
+     *  @param tag      Name of tag to read
+     *  @param count    Number of elements to read (if it is an array)
      */
-    public MRChipReadProtocol(final String tag, short count)
+    public MRChipReadProtocol(final String tag, final short count)
     {
         this(tag, new CIPReadDataProtocol(count));
     }
@@ -46,7 +46,7 @@ public class MRChipReadProtocol extends MessageRouterProtocol
         super(CNService.CIP_ReadData, Symbol(tag), reader);
         this.reader = reader;
     }
-    
+
     public CIPData getData()
     {
         return reader.getData();

@@ -10,17 +10,18 @@ package etherip.util;
 import java.nio.ByteBuffer;
 
 /** Create hex-dump of buffer
- *  
+ *
  *  <p>The <code>to...</code> routines return a String in Hex, Ascii or combined hexdump format.
- *  
+ *
  *  <p>The plain <code>hex</code>, <code>ascii</code>, <code>hexdump</code> routines
  *  append the hex, ascii or combined info to a buffer.
- *  
+ *
  *  <p>The {@link ByteBuffer} will be dumped from its current position to its limit.
  *  The position and limit will not be modified.
- *  
+ *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class Hexdump
 {
     private static final int ELEMENTS_PER_LINE = 16;
@@ -31,7 +32,7 @@ public class Hexdump
     	hex(buffer, out);
     	return out.toString();
     }
-    
+
     public static void hex(final ByteBuffer buffer, final StringBuilder out)
     {
     	final int start = buffer.position();
@@ -59,14 +60,14 @@ public class Hexdump
     {
     	return toAscii(ByteBuffer.wrap(bytes)); // byte order does not matter, only byte-wise access
     }
-    
+
     public static String toAscii(final ByteBuffer buffer)
     {
     	final StringBuilder out = new StringBuilder();
     	ascii(buffer, out);
     	return out.toString();
     }
-    
+
     public static void ascii(final ByteBuffer buffer, final StringBuilder out)
     {
     	final int start = buffer.position();
@@ -91,14 +92,14 @@ public class Hexdump
     {
     	return toHexdump(ByteBuffer.wrap(bytes)); // byte order does not matter, only byte-wise access
     }
-    
+
     public static String toHexdump(final ByteBuffer buffer)
     {
     	final StringBuilder out = new StringBuilder();
     	hexdump(buffer, out);
     	return out.toString();
     }
-    
+
     public static void hexdump(final ByteBuffer buffer, final StringBuilder out)
     {
     	final int start = buffer.position();
@@ -131,6 +132,9 @@ public class Hexdump
     	buffer.rewind();
     }
 
+    /** @param bytes Any bytes
+     *  @return Printable string where any non-ASCII chars are replaced by '.'
+     */
     public static String escapeChars(final byte... bytes)
     {
     	final StringBuilder buf = new StringBuilder();

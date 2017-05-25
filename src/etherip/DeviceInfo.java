@@ -8,10 +8,11 @@
 package etherip;
 
 /** Device info
- * 
+ *
  *  <p>Read when connecting to the device.
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class DeviceInfo
 {
 	final private short vendor;

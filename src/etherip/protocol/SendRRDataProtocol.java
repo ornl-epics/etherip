@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 /** SendRRData, the unconnected Request/Response protocol
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class SendRRDataProtocol extends ProtocolAdapter
 {
 	/** Byte size of encapsulation header */
@@ -26,7 +27,7 @@ public class SendRRDataProtocol extends ProtocolAdapter
     {
     	this.body = body;
     }
-    
+
 	/** {@inheritDoc} */
     @Override
     public int getRequestSize()
@@ -36,7 +37,7 @@ public class SendRRDataProtocol extends ProtocolAdapter
 
 	/** {@inheritDoc} */
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
     	final short addr_type = 0;
     	final short data_type = 0xB2;
@@ -58,10 +59,10 @@ public class SendRRDataProtocol extends ProtocolAdapter
     		log.append(String.format("UINT data type          : 0x%X (%s)\n", data_type, decodeCPT(data_type)));
     		log.append("UINT data length        : ").append((short) body.getRequestSize()).append("\n");
         }
-    	
+
     	body.encode(buf, log);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
@@ -77,7 +78,7 @@ public class SendRRDataProtocol extends ProtocolAdapter
     	final short addr_length = buf.getShort();
     	final short data_type = buf.getShort();
     	final short received_data_length = buf.getShort();
-    	
+
     	//  Followed by data...
     	if (log != null)
         {
@@ -90,10 +91,10 @@ public class SendRRDataProtocol extends ProtocolAdapter
         	log.append(String.format("UINT data type          : 0x%X (%s)\n", data_type, decodeCPT(data_type)));
         	log.append("UINT data length        : ").append(received_data_length).append("\n");
         }
-    	
+
     	body.decode(buf, received_data_length, log);
     }
-    
+
     /** Decode IDs for "Common Packet Type" (address and data IDs)
      *  <p>Spec, 8.9.1
      */

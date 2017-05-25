@@ -16,10 +16,11 @@ import etherip.types.CNService;
  *
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class CIPWriteDataProtocol extends ProtocolAdapter
 {
     final private CIPData data;
-    
+
     public CIPWriteDataProtocol(final CIPData data)
     {
         this.data = data;
@@ -32,7 +33,7 @@ public class CIPWriteDataProtocol extends ProtocolAdapter
     }
 
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log)
+    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
     {
         data.encode(buf);
         if (log != null)

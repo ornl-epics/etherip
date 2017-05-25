@@ -29,15 +29,16 @@ import etherip.types.CNService;
 /** List of {@link Tag}s on the PLC
  *  @author Kay Kasemir
  */
+@SuppressWarnings("nls")
 public class TagList
 {
     /** {@link Tag}s handled by this {@link TagList}
-     *  
+     *
      *  <p>SYNC on <code>this</code> for access
      */
     final private List<Tag> tags = new ArrayList<>();
 
-    /** @param name Name of tag to add to list 
+    /** @param name Name of tag to add to list
      *  @return {@link Tag}
      */
     public synchronized Tag add(final String name)
@@ -46,7 +47,7 @@ public class TagList
         tags.add(tag);
         return tag;
     }
-    
+
     /** Locate tag for name
      *  @param name Tag name
      *  @return {@link Tag}
@@ -61,11 +62,11 @@ public class TagList
     }
 
     /** Process tags on list
-     * 
+     *
      *  <p>Reads most tags and updates their value.
      *  Exception are tags marked for writing, which are written once,
      *  then reset to read-mode.
-     * 
+     *
      *  @param connection {@link Connection} to use for the communication
      *  @throws Exception on error
      */
@@ -89,7 +90,7 @@ public class TagList
                 }
             }
         }
-        
+
         // Perform the protocol exchange
         final Encapsulation encap =
             new Encapsulation(SendRRData, connection.getSession(),
@@ -98,7 +99,7 @@ public class TagList
                         new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
                             new CIPMultiRequestProtocol(readwrite)))));
         connection.execute(encap);
-        
+
         // Handle responses: Fetch data, reset 'write' flags
         for (int i=0; i<tags.size(); ++i)
         {
@@ -126,7 +127,7 @@ public class TagList
             }
         }
     }
-    
+
     @Override
     public String toString()
     {

@@ -22,6 +22,7 @@ import etherip.types.CNService;
 import etherip.util.Hexdump;
 
 /** @author Kay Kasemir */
+@SuppressWarnings("nls")
 public class MultiRequestTest
 {
 	private ByteBuffer buf = TestSettings.getBuffer();
@@ -31,15 +32,15 @@ public class MultiRequestTest
 	{
 		TestSettings.logAll();
 	}
-	
+
 	@Test
 	public void testReadData() throws Exception
 	{
 	    final int session = 0x12345678;
-	    
+
         final MRChipReadProtocol cip_read1 = new MRChipReadProtocol("kay_ai");
         final MRChipReadProtocol cip_read2 = new MRChipReadProtocol("kay_ao");
-        
+
         final Encapsulation encap =
             new Encapsulation(SendRRData, session,
                 new SendRRDataProtocol(
@@ -51,7 +52,7 @@ public class MultiRequestTest
 		encap.encode(buf, log);
 		System.out.println(log.toString());
 		buf.flip();
-		
+
 		final String dump = Hexdump.toHexdump(buf);
         System.out.println(dump);
         assertThat(dump,
