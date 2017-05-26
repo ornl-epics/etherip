@@ -22,12 +22,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("nls")
 public class CNSymbolPath extends CNPath
 {
+    /** One element of a path
+     *
+     *  <p>Contains a string path and an optional array index
+     */
 	class PathAndIndex
 	{
 		private String path;
 		private Integer index;
 
-		public PathAndIndex(String path, Integer index)
+		public PathAndIndex(final String path, final Integer index)
 		{
 			this.path = path;
 			this.index = index;
@@ -48,7 +52,7 @@ public class CNSymbolPath extends CNPath
 		{
 		    if (index == null)
 		        return path;
-		    return path + "(" + index + ")";
+		    return path + "[" + index + "]";
 		}
 	};
 
@@ -94,16 +98,16 @@ public class CNSymbolPath extends CNPath
 	{
 		// spec 4 p.21: "ANSI extended symbol segment"
 		buf.put((byte) (getRequestSize() / 2));
-		for(PathAndIndex pi : paths)
+		for (PathAndIndex pi : paths)
 		{
-			String s = pi.getPath();
+			final String s = pi.getPath();
 			buf.put((byte) 0x91);
 			buf.put((byte) s.length());
 			buf.put(s.getBytes());
 			if (needPad(s))
 				buf.put((byte) 0);
-			Integer index = pi.getIndex();
-			if (index!=null)
+			final Integer index = pi.getIndex();
+			if (index != null)
 			{
 				// Path Segment 28, from wireshark
 				buf.put((byte) 0x28);
