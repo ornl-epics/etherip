@@ -8,40 +8,34 @@
 package etherip.protocol;
 
 import static etherip.EtherNetIP.logger;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.util.logging.Level;
-
-import etherip.util.Hexdump;
 
 /** Connection to EtherNet/IP device
  *
  *  <p>Network connection as well as buffer and session info
  *  that's used for the duration of a connection.
  *
- *  @author Kay Kasemir
+ *  @author Kay Kasemir, László Pataki
  */
 @SuppressWarnings("nls")
-public class Connection implements AutoCloseable
+public abstract class Connection implements AutoCloseable
 {
 	/** EtherIP uses little endian */
 	final public static ByteOrder BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 
 	final private static int BUFFER_SIZE = 600;
 
-	final private int slot;
+	protected final int slot;
 
-	final private AsynchronousSocketChannel channel;
-	final private ByteBuffer buffer;
+	protected final ByteBuffer buffer;
 
 	private int session = 0;
 
-	private long timeout_ms = 2000;
-	private int port = 0xAF12;
+	protected long timeout_ms = 2000;
+	protected int port = 0xAF12;
 
 	/** Initialize
 	 *  @param address IP address of device
@@ -50,10 +44,8 @@ public class Connection implements AutoCloseable
 	 */
 	public Connection(final String address, final int slot) throws Exception
 	{
-	    logger.log(Level.INFO, "Connecting to {0}:{1}", new Object[] { address, String.format("0x%04X", port) });
+        logger.log(Level.INFO, "Connecting to {0}:{1}", new Object[] { address, String.format("0x%04X", port) });
 	    this.slot = slot;
-        channel = AsynchronousSocketChannel.open();
-		channel.connect(new InetSocketAddress(address, port)).get(timeout_ms, MILLISECONDS);
 
 		buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 		buffer.order(BYTE_ORDER);
@@ -83,72 +75,20 @@ public class Connection implements AutoCloseable
 		return buffer;
 	}
 
-	@Override
-	public void close() throws Exception
-	{
-		channel.close();
-	}
-
+	public abstract boolean isOpen() throws Exception;
+	
 	/** Write protocol data
 	 *  @param encoder {@link ProtocolEncoder} used to <code>encode</code> buffer
 	 *  @throws Exception on error
 	 */
-	public void write(final ProtocolEncoder encoder) throws Exception
-    {
-		final StringBuilder log = logger.isLoggable(Level.FINER) ? new StringBuilder() : null;
-		buffer.clear();
-		encoder.encode(buffer, log);
-		if (log != null)
-			logger.finer("Protocol Encoding\n" + log.toString());
-
-		buffer.flip();
-		if (logger.isLoggable(Level.FINEST))
-			logger.log(Level.FINEST, "Data sent ({0} bytes):\n{1}",
-					new Object[] { buffer.remaining(), Hexdump.toHexdump(buffer) });
-
-		int to_write = buffer.limit();
-		while (to_write > 0)
-		{
-			final int written = channel.write(buffer).get(timeout_ms, MILLISECONDS);
-			to_write -= written;
-			if (to_write > 0)
-				buffer.compact();
-		}
-    }
+    public abstract void write(final ProtocolEncoder encoder) throws Exception;
 
 	/** Read protocol data
 	 *  @param decoder {@link ProtocolDecoder} used to <code>decode</code> buffer
 	 *  @throws Exception on error
 	 */
-	public void read(final ProtocolDecoder decoder) throws Exception
-    {
-		// Read until protocol has enough data to decode
-		buffer.clear();
-		do
-		{
-			channel.read(buffer).get(timeout_ms, MILLISECONDS);
-		}
-		while (buffer.position() < decoder.getResponseSize(buffer));
-
-		// Prepare to decode
-		buffer.flip();
-
-		if (logger.isLoggable(Level.FINEST))
-			logger.log(Level.FINEST, "Data read ({0} bytes):\n{1}",
-					new Object[] { buffer.remaining(), Hexdump.toHexdump(buffer) });
-
-		final StringBuilder log = logger.isLoggable(Level.FINER) ? new StringBuilder() : null;
-		try
-		{
-		    decoder.decode(buffer, buffer.remaining(), log);
-		}
-		finally
-		{   // Show log even on error
-    		if (log != null)
-    			logger.finer("Protocol Decoding\n" + log.toString());
-		}
-    }
-
+    protected abstract void read(final ProtocolDecoder decoder) throws Exception;
+    
 	/** Write protocol request and handle response
 	 *  @param protocol {@link Protocol}
 	 *  @throws Exception on error
@@ -158,4 +98,5 @@ public class Connection implements AutoCloseable
 		write(protocol);
 		read(protocol);
     }
+
 }

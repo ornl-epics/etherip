@@ -21,7 +21,7 @@ public enum CNService
     CIP_ReadData(0x4C),         // Logix5000 Data Access
     CIP_WriteData(0x4D),        // Logix5000 Data Access
     CM_Unconnected_Send(0x52),
-
+    Get_Connection_Data(0x56), // CIP VOL1_3.3: 3-5.5
 	Get_Attribute_All_Reply(0x01 | 0x80),
     Get_Attribute_Single_Reply(0x0E | 0x80),
     CIP_MultiRequest_Reply(0x0A | 0x80),

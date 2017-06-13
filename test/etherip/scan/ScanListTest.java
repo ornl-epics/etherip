@@ -24,6 +24,7 @@ import etherip.TagListener;
 import etherip.TestSettings;
 import etherip.protocol.Connection;
 import etherip.protocol.RegisterSession;
+import etherip.protocol.TcpConnection;
 
 /** JUnit demo of the {@link ScanList}
  *  @author Kay Kasemir
@@ -33,14 +34,14 @@ public class ScanListTest implements TagListener
 {
     final private CountDownLatch updates = new CountDownLatch(5);
     final private CountDownLatch errors = new CountDownLatch(5);
-    private Connection connection;
+    private TcpConnection connection;
 
     @Before
     public void setup() throws Exception
     {
         TestSettings.logAll();
 
-        connection = new Connection(TestSettings.get("plc"), TestSettings.getInt("slot"));
+        connection = new TcpConnection(TestSettings.get("plc"), TestSettings.getInt("slot"));
         final RegisterSession register = new RegisterSession();
         connection.execute(register);
         connection.setSession(register.getSession());

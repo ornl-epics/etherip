@@ -8,20 +8,25 @@
 package etherip.types;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /** Control Net Path for class, instance, attribute
  *
  *  <p>Example (with suitable static import):
  *  <p><code>CNPath path = Identity.instance(1).attr(7)</code>
- *  @author Kay Kasemir
+ *  @author Kay Kasemir, László Pataki
  */
 @SuppressWarnings("nls")
 public class CNClassPath extends CNPath
 {
-	final private int class_code;
-	final private String class_name;
+	private int class_code;
+	private String class_name;
 	private int instance = 1, attr = 0;
 
+	public CNClassPath()
+    {
+    }
+	
 	protected CNClassPath(final int class_code, final String class_name)
 	{
 		this.class_code = class_code;
@@ -77,4 +82,33 @@ public class CNClassPath extends CNPath
 		return String.format("Path (2 el) Class(0x20) 0x%X (%s), instance(0x24) %d",
 				class_code, class_name, instance);
 	}
+
+    @Override
+    public int getResponseSize(final ByteBuffer buf) throws Exception
+    {
+        return 2 + this.getPathLength() * 2;
+    }
+
+    @Override
+    public void decode(final ByteBuffer buf, int available, final StringBuilder log) throws Exception
+    {
+        final byte[] raw = new byte[2];
+        buf.get(raw);
+        available = ByteBuffer.wrap(raw).order(ByteOrder.LITTLE_ENDIAN).getShort();
+
+        if (raw[0] == 0x02)
+        {
+            buf.get(raw);
+            if (raw[0] == 0x20)
+            {
+                this.class_code = new Integer(raw[1]);
+                this.class_name = "Ethernet Link";
+            }
+            buf.get(raw);
+            if (raw[0] == 0x24)
+            {
+                this.instance(new Integer(raw[1]));
+            }
+        }
+    }
 }

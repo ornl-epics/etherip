@@ -7,12 +7,12 @@
  *******************************************************************************/
 package etherip.types;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.nio.ByteBuffer;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import etherip.TestSettings;
@@ -60,8 +60,9 @@ public class CIPDataTest
         final String txt = value.getString();
         System.out.println(txt);
         assertThat(txt, equalTo("Hello"));
-        assertThat(value.toString(), containsString("CIP_STRUCT"));
-        assertThat(value.toString(), containsString("STRING"));
+        
+        Assert.assertTrue(value.toString().contains("CIP_STRUCT"));
+        Assert.assertTrue(value.toString().contains("STRING"));
     }
 
     @Test

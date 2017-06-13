@@ -138,4 +138,18 @@ public class CNSymbolPath extends CNPath
         }
         return buf.toString();
     }
+
+    @Override
+    public int getResponseSize(ByteBuffer buf) throws Exception
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void decode(ByteBuffer buf, int available, StringBuilder log) throws Exception
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import etherip.protocol.Connection;
 import etherip.protocol.RegisterSession;
+import etherip.protocol.TcpConnection;
 
 /** @author Kay Kasemir */
 @SuppressWarnings("nls")
@@ -32,7 +33,7 @@ public class TagListDemo
 	    Logger.getLogger("").setLevel(Level.FINE);
 	    try
 	    (
-            final Connection connection = new Connection(TestSettings.get("plc"), TestSettings.getInt("slot"));
+            final Connection connection = new TcpConnection(TestSettings.get("plc"), TestSettings.getInt("slot"));
         )
 		{
             final RegisterSession register = new RegisterSession();

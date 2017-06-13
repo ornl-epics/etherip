@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +19,9 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import etherip.EtherNetIP;
+import etherip.data.CipException;
+import etherip.data.Identity;
 import etherip.types.CIPData;
 import etherip.types.CIPData.Type;
 
@@ -30,21 +34,66 @@ public class EtherIPDemo
 	{
 		TestSettings.logAll();
 		Logger.getLogger("").setLevel(Level.ALL);
-        //Logger.getLogger("").setLevel(Level.WARNING);
 	}
 
 	@Test
-	public void testConnectIP() throws Exception
+	public void testConnectTcp() throws Exception
 	{
 		try
 		(
 		    EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
 		)
 		{
-			plc.connect();
+			plc.connectTcp();
 
 			System.out.println("\n*\n* Connected:\n*\n");
+			System.out.println(plc.getIdentity());
+		}
+		catch (final CipException e)
+		{
+			// It is possible to ask some individual field of the ExceptionCip, but these are included in the getMessage().
+			// System.err.println(e.getStatusCode());
+			// System.err.println(e.getStatusName());
+			// System.err.println(e.getStatusDescription());
+			System.err.println(e.getMessage());
+			System.err.println("Failed with CipException");
+			fail("Failed with CipException");
+		}
+	}
+	
+	@Test
+	public void testConnectUdp() throws Exception
+	{
+		Logger.getLogger("").setLevel(Level.INFO);
+
+		TestSettings.logAll();
+		try
+		(
+		    EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
+		)
+		{
+			plc.connectUdp();
+
+			System.out.println("\n*\n* UDP Socket established:\n*\n");
 			System.out.println(plc);
+			
+			final Identity[] listIdentity = plc.listIdentity();
+
+			for (final Identity identity : listIdentity)
+			{
+				System.out.println(identity);
+			}
+			// plc.listServices();
+		}
+		catch (final CipException e)
+		{
+			// It is possible to ask some individual field of the ExceptionCip, but these are included in the getMessage().
+			// System.err.println(e.getStatusCode());
+			// System.err.println(e.getStatusName());
+			// System.err.println(e.getStatusDescription());
+			System.err.println(e.getMessage());
+			System.err.println("Failed with CipException");
+			fail("Failed with CipException");
 		}
 	}
 
@@ -56,7 +105,7 @@ public class EtherIPDemo
             EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
         )
         {
-            plc.connect();
+            plc.connectTcp();
 
             final String tag = TestSettings.get("float_tag");
 
@@ -81,7 +130,7 @@ public class EtherIPDemo
             EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
         )
         {
-            plc.connect();
+            plc.connectTcp();
 
             final String tag = TestSettings.get("bool_tag");
             System.out.println("\n*\n* bool '" + tag + "':\n*\n");
@@ -122,7 +171,7 @@ public class EtherIPDemo
             EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
         )
         {
-            plc.connect();
+            plc.connectTcp();
 
             final String tag = TestSettings.get("string_tag");
 
@@ -154,7 +203,7 @@ public class EtherIPDemo
             EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"), TestSettings.getInt("slot"));
         )
         {
-            plc.connect();
+            plc.connectTcp();
 
             System.out.println("\n*\n* Multi read:\n*\n");
             final String[] tags = new String[]
