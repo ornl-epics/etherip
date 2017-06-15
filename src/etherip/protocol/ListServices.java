@@ -9,9 +9,10 @@ package etherip.protocol;
 
 import etherip.protocol.ListServicesProtocol.Service;
 
-/** List services that the device supports
+/**
+ * List services that the device supports
  *
- *  @author Kay Kasemir
+ * @author Kay Kasemir
  */
 public class ListServices extends Encapsulation
 {
@@ -29,8 +30,8 @@ public class ListServices extends Encapsulation
     }
 
     /** @return {@link Service}s supported by device */
-	final public Service[] getServices()
-	{
-		return list_services.getServices();
-	}
+    final public Service[] getServices()
+    {
+        return this.list_services.getServices();
+    }
 }

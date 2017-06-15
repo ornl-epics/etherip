@@ -16,18 +16,20 @@ import etherip.Tag;
 import etherip.TagList;
 import etherip.protocol.Connection;
 
-/** List of tags that are processed (read or written)
- *  @author Kay Kasemir
+/**
+ * List of tags that are processed (read or written)
+ *
+ * @author Kay Kasemir
  */
 class ScanList extends TimerTask
 {
     final private double period;
     final private Connection connection;
-    
+
     final private TagList tags = new TagList();
-   
+
     private volatile boolean aborted = false;
-    
+
     public ScanList(final double period, final Connection connection)
     {
         this.period = period;
@@ -36,29 +38,32 @@ class ScanList extends TimerTask
 
     public Tag add(final String tag_name)
     {
-        return tags.add(tag_name);
+        return this.tags.add(tag_name);
     }
-    
+
     @Override
     public void run()
     {
-        logger.log(Level.FINE, "Scan list {0} sec", period);
+        logger.log(Level.FINE, "Scan list {0} sec", this.period);
         try
         {
-            tags.process(connection);
+            this.tags.process(this.connection);
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
-            if (aborted)
+            if (this.aborted)
+            {
                 return;
-            logger.log(Level.WARNING, "Scan list " + period + " sec process failed", ex);
+            }
+            logger.log(Level.WARNING,
+                    "Scan list " + this.period + " sec process failed", ex);
         }
     }
-    
+
     @Override
     public boolean cancel()
     {
-        aborted = true;
+        this.aborted = true;
         return super.cancel();
     }
 }

@@ -23,18 +23,19 @@ import etherip.util.Hexdump;
 @SuppressWarnings("nls")
 public class EncapsulationTest
 {
-	private int body_size = 0;
+    private int body_size = 0;
 
-	@Before
-	public void setup()
-	{
-		TestSettings.logAll();
-	}
+    @Before
+    public void setup()
+    {
+        TestSettings.logAll();
+    }
 
     @Test
     public void testCommand()
     {
-        assertThat(Encapsulation.Command.ListServices.toString(), equalTo("ListServices (0x0004)"));
+        assertThat(Encapsulation.Command.ListServices.toString(),
+                equalTo("ListServices (0x0004)"));
     }
 
     @Test
@@ -43,28 +44,32 @@ public class EncapsulationTest
         final ByteBuffer send = ByteBuffer.allocate(100);
         send.order(Connection.BYTE_ORDER);
 
-        final Encapsulation encap = new Encapsulation(Encapsulation.Command.ListInterfaces, 0,
-        		new ProtocolAdapter()
-        {
-			@Override
-            public int getRequestSize()
-            {
-	            return 42;
-            }
+        final Encapsulation encap = new Encapsulation(
+                Encapsulation.Command.ListInterfaces, 0, new ProtocolAdapter()
+                {
+                    @Override
+                    public int getRequestSize()
+                    {
+                        return 42;
+                    }
 
-			@Override
-            public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
-            {
-				body_size = available;
-            }
-        });
+                    @Override
+                    public void decode(final ByteBuffer buf,
+                            final int available, final StringBuilder log)
+                            throws Exception
+                    {
+                        EncapsulationTest.this.body_size = available;
+                    }
+                });
         encap.encode(send, null);
-        assertThat(send.position(), equalTo(Encapsulation.ENCAPSULATION_HEADER_SIZE));
+        assertThat(send.position(),
+                equalTo(Encapsulation.ENCAPSULATION_HEADER_SIZE));
         send.flip();
 
         final String string = Hexdump.toCompactHexdump(send);
         System.out.println(string);
-        assertThat(string, equalTo("0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 46 75 6E 73 - d.*.........Funs\n0010 - 74 75 66 66 00 00 00 00 - tuff...."));
+        assertThat(string, equalTo(
+                "0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 46 75 6E 73 - d.*.........Funs\n0010 - 74 75 66 66 00 00 00 00 - tuff...."));
 
         ByteBuffer receive = ByteBuffer.allocate(100);
         receive.order(Connection.BYTE_ORDER);
@@ -79,29 +84,30 @@ public class EncapsulationTest
         // Now that there's a length in the header, required response includes that
         assertThat(encap.getResponseSize(receive), equalTo(24 + 42));
 
-
         // Decode
         receive.flip();
         // Should detect that message is too short
         try
         {
-        	encap.decode(receive, receive.remaining(), null);
-        	fail("Didn't detect that encapsulation had no body");
+            encap.decode(receive, receive.remaining(), null);
+            fail("Didn't detect that encapsulation had no body");
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
-        	System.err.println("Caught " + ex.getMessage());
-        	assertThat(ex.getMessage().contains("Need"), equalTo(true));
+            System.err.println("Caught " + ex.getMessage());
+            assertThat(ex.getMessage().contains("Need"), equalTo(true));
         }
         // Add remaining bytes (not decoded by Encapsulation)
         receive.position(receive.limit());
         receive.limit(receive.capacity());
-        for (int i=0; i<42; ++i)
-        	receive.put((byte) i);
+        for (int i = 0; i < 42; ++i)
+        {
+            receive.put((byte) i);
+        }
 
         receive.flip();
-    	encap.decode(receive, receive.remaining(), null);
+        encap.decode(receive, receive.remaining(), null);
 
-        assertThat(body_size, equalTo(42));
+        assertThat(this.body_size, equalTo(42));
     }
 }

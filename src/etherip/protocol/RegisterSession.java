@@ -7,13 +7,16 @@
  *******************************************************************************/
 package etherip.protocol;
 
-/** Perform the 'RegisterSession' command
- *  @author Kay Kasemir
+/**
+ * Perform the 'RegisterSession' command
+ *
+ * @author Kay Kasemir
  */
 public class RegisterSession extends Encapsulation
 {
     public RegisterSession()
     {
-        super(Encapsulation.Command.RegisterSession, 0, new RegisterSessionProtocol());
+        super(Encapsulation.Command.RegisterSession, 0,
+                new RegisterSessionProtocol());
     }
 }

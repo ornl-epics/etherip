@@ -12,10 +12,10 @@ import java.nio.ByteBuffer;
 import etherip.types.CIPData;
 import etherip.types.CNService;
 
-/** Protocol body for {@link CNService#CIP_ReadData}
+/**
+ * Protocol body for {@link CNService#CIP_ReadData}
  *
- *  @author Kay Kasemir
- *
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class CIPReadDataProtocol extends ProtocolAdapter
@@ -23,20 +23,21 @@ public class CIPReadDataProtocol extends ProtocolAdapter
     private CIPData data;
     private final short count;
 
-
     /**
      * Create a read protocol message that requests a single element
      */
-    public CIPReadDataProtocol() {
-        count = 1;
+    public CIPReadDataProtocol()
+    {
+        this.count = 1;
     }
-
 
     /**
      * Create a read protocol message that reqeusts one or more elements if request is an array
+     *
      * @param count
      */
-    public CIPReadDataProtocol(short count) {
+    public CIPReadDataProtocol(final short count)
+    {
         this.count = count;
     }
 
@@ -49,31 +50,39 @@ public class CIPReadDataProtocol extends ProtocolAdapter
     @Override
     public void encode(final ByteBuffer buf, final StringBuilder log)
     {
-        buf.putShort(count); // elements
+        buf.putShort(this.count); // elements
         if (log != null)
+        {
             log.append("USINT elements          : 1\n");
+        }
     }
 
     @Override
-    public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
+    public void decode(final ByteBuffer buf, final int available,
+            final StringBuilder log) throws Exception
     {
         if (available <= 0)
         {
-            data = null;
+            this.data = null;
             if (log != null)
+            {
                 log.append("USINT type, data        : - nothing-\n");
+            }
             return;
         }
         final CIPData.Type type = CIPData.Type.forCode(buf.getShort());
         final byte[] raw = new byte[available - 2];
         buf.get(raw);
-        data = new CIPData(type, raw);
+        this.data = new CIPData(type, raw);
         if (log != null)
-            log.append("USINT type, data        : ").append(data).append("\n");
+        {
+            log.append("USINT type, data        : ").append(this.data)
+                    .append("\n");
+        }
     }
 
     final public CIPData getData()
     {
-        return data;
+        return this.data;
     }
 }

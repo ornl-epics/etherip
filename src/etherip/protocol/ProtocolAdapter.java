@@ -9,36 +9,40 @@ package etherip.protocol;
 
 import java.nio.ByteBuffer;
 
-/** Base for protocol handler with NOP implementations
- *  @author Kay Kasemir
+/**
+ * Base for protocol handler with NOP implementations
+ *
+ * @author Kay Kasemir
  */
 public class ProtocolAdapter implements Protocol
 {
-	/** {@inheritDoc} */
-	@Override
+    /** {@inheritDoc} */
+    @Override
     public int getRequestSize()
     {
-	    return 0;
+        return 0;
     }
 
-	/** {@inheritDoc} */
-	@Override
-    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
+    /** {@inheritDoc} */
+    @Override
+    public void encode(final ByteBuffer buf, final StringBuilder log)
+            throws Exception
     {
-		// NOP
+        // NOP
     }
 
-	/** {@inheritDoc} */
-	@Override
+    /** {@inheritDoc} */
+    @Override
     public int getResponseSize(final ByteBuffer buf) throws Exception
     {
-	    return 0;
+        return 0;
     }
 
-	/** {@inheritDoc} */
-	@Override
-    public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
+    /** {@inheritDoc} */
+    @Override
+    public void decode(final ByteBuffer buf, final int available,
+            final StringBuilder log) throws Exception
     {
-		// NOP
+        // NOP
     }
 }

@@ -3,6 +3,14 @@ Changes
 
 Version number is in EtherNetIP.version
 
+* 1.3 - 2017/06/15
+ADD: 
+	+ Support UDP connections
+	+ Support PLC slot requests from rack
+	+ Implement CIP exceptions
+	+ Extend with CIP Object specific requests
+	+ Create code style and clean up profile
+
 * 1.2 - 2017/05/25
 Fix: Support reading and writing STRING tags (#12).
      Implement EtherNetIP#readTags()

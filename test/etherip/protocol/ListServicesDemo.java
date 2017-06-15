@@ -14,11 +14,14 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import etherip.EtherNetIP;
 import etherip.TestSettings;
 import etherip.protocol.ListServicesProtocol.Service;
 
-/** JUnit demo of {@link ListServices}
- *  @author Kay Kasemir
+/**
+ * JUnit demo of {@link ListServices}
+ *
+ * @author Kay Kasemir, László Pataki
  */
 @SuppressWarnings("nls")
 public class ListServicesDemo
@@ -26,23 +29,20 @@ public class ListServicesDemo
     @Test
     public void testListServices() throws Exception
     {
-    	TestSettings.logAll();
+        TestSettings.logAll();
 
-    	try
-    	(
-			Connection connection = new Connection(TestSettings.get("plc"), TestSettings.getInt("slot"));
-		)
-		{
-    		final ListServices list_services = new ListServices();
-    		connection.execute(list_services);
+        try (EtherNetIP etherNetIP = new EtherNetIP(TestSettings.get("plc"),
+                TestSettings.getInt("slot"));)
+        {
+            etherNetIP.connectTcp();
 
-    		final Service[] services = list_services.getServices();
-			assertThat(services, not(nullValue()));
+            final Service[] services = etherNetIP.listServices();
+            assertThat(services, not(nullValue()));
 
-			// In principle, multiple services could be supported.
-			// So far have only seen this one
-			assertThat(services.length, equalTo(1));
-			assertThat(services[0].getName(), equalTo("Communications.."));
-		}
+            // In principle, multiple services could be supported.
+            // So far have only seen this one
+            assertThat(services.length, equalTo(1));
+            assertThat(services[0].getName(), equalTo("Communications.."));
+        }
     }
 }

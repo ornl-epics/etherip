@@ -22,48 +22,51 @@ import org.junit.Test;
 import etherip.Tag;
 import etherip.TagListener;
 import etherip.TestSettings;
-import etherip.protocol.Connection;
 import etherip.protocol.RegisterSession;
+import etherip.protocol.TcpConnection;
 
-/** JUnit demo of the {@link ScanList}
- *  @author Kay Kasemir
+/**
+ * JUnit demo of the {@link ScanList}
+ *
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class ScanListTest implements TagListener
 {
     final private CountDownLatch updates = new CountDownLatch(5);
     final private CountDownLatch errors = new CountDownLatch(5);
-    private Connection connection;
+    private TcpConnection connection;
 
     @Before
     public void setup() throws Exception
     {
         TestSettings.logAll();
 
-        connection = new Connection(TestSettings.get("plc"), TestSettings.getInt("slot"));
+        this.connection = new TcpConnection(TestSettings.get("plc"),
+                TestSettings.getInt("slot"));
         final RegisterSession register = new RegisterSession();
-        connection.execute(register);
-        connection.setSession(register.getSession());
+        this.connection.execute(register);
+        this.connection.setSession(register.getSession());
     }
 
     @After
     public void shutdown() throws Exception
     {
-        connection.close();
+        this.connection.close();
     }
 
     @Override
     public void tagUpdate(final Tag tag)
     {
         System.out.println("Update: " + tag);
-        updates.countDown();
+        this.updates.countDown();
     }
 
     @Override
     public void tagError(final Tag tag)
     {
         System.out.println("Error: " + tag);
-        errors.countDown();
+        this.errors.countDown();
     }
 
     @Test
@@ -71,15 +74,15 @@ public class ScanListTest implements TagListener
     {
         Logger.getLogger("").setLevel(Level.CONFIG);
 
-        final Scanner scanner = new Scanner(connection);
+        final Scanner scanner = new Scanner(this.connection);
         final Tag tag1 = scanner.add(1.0, TestSettings.get("float_tag"));
         final Tag tag2 = scanner.add(2.0, TestSettings.get("bool_tag"));
 
         tag1.addListener(this);
         tag2.addListener(this);
-        updates.await(10, SECONDS);
+        this.updates.await(10, SECONDS);
 
-        assertThat(updates.getCount(), equalTo(0l));
+        assertThat(this.updates.getCount(), equalTo(0l));
 
         scanner.stop();
 
@@ -87,22 +90,22 @@ public class ScanListTest implements TagListener
         tag1.removeListener(this);
     }
 
-    @Test(timeout=20000)
+    @Test(timeout = 20000)
     public void testScanListWrite() throws Exception
     {
         Logger.getLogger("").setLevel(Level.CONFIG);
 
-        final Scanner scanner = new Scanner(connection);
+        final Scanner scanner = new Scanner(this.connection);
         final Tag tag1 = scanner.add(1.0, TestSettings.get("write_tag"));
         final Tag tag2 = scanner.add(2.0, TestSettings.get("bool_tag"));
 
         tag1.addListener(this);
         tag2.addListener(this);
-        updates.await(10, SECONDS);
-        assertThat(updates.getCount(), equalTo(0l));
+        this.updates.await(10, SECONDS);
+        assertThat(this.updates.getCount(), equalTo(0l));
 
         // Increment value of tag
-        Number value = tag1.getValue().getNumber(0);
+        final Number value = tag1.getValue().getNumber(0);
         System.out.println(tag1.getName() + " is " + value);
         System.out.println(" .. incrementing .. ");
         tag1.setWriteValue(0, value.intValue() + 1);
@@ -114,7 +117,9 @@ public class ScanListTest implements TagListener
         // arrived with the new value.
         Thread.sleep(2000);
         while (tag1.getValue().equals(value))
+        {
             Thread.sleep(200);
+        }
 
         System.out.println(tag1.getName() + " changed to " + tag1.getValue());
 
@@ -127,13 +132,13 @@ public class ScanListTest implements TagListener
     @Test
     public void testScanListError() throws Exception
     {
-        final Scanner scanner = new Scanner(connection);
+        final Scanner scanner = new Scanner(this.connection);
         final Tag tag = scanner.add(1.0, TestSettings.get("invalid_tag"));
 
         tag.addListener(this);
-        errors.await(10, SECONDS);
+        this.errors.await(10, SECONDS);
 
-        assertThat(errors.getCount(), equalTo(0l));
+        assertThat(this.errors.getCount(), equalTo(0l));
 
         scanner.stop();
 

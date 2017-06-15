@@ -8,20 +8,28 @@
 package etherip.protocol;
 
 import static etherip.types.CNPath.Symbol;
+
 import etherip.types.CIPData;
 import etherip.types.CNService;
 
-/** Message Router protocol for writing a tag
- *  @author Kay Kasemir
+/**
+ * Message Router protocol for writing a tag
+ *
+ * @author Kay Kasemir
  */
 public class MRChipWriteProtocol extends MessageRouterProtocol
 {
-    /** Initialize
-     *  @param tag Name of tag to write
-	 *  @param value {@link CIPData} to write
-	 */
+    /**
+     * Initialize
+     *
+     * @param tag
+     *            Name of tag to write
+     * @param value
+     *            {@link CIPData} to write
+     */
     public MRChipWriteProtocol(final String tag, final CIPData value)
     {
-        super(CNService.CIP_WriteData, Symbol(tag), new CIPWriteDataProtocol(value));
+        super(CNService.CIP_WriteData, Symbol(tag),
+                new CIPWriteDataProtocol(value));
     }
 }
