@@ -1,22 +1,28 @@
+/*******************************************************************************
+ * Copyright (c) 2017 NETvisor Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package etherip.data;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * @see CIP Vol1_3.3: AppendixB-Status Codes Table 3-5.29 Connection Manager Service Request Error Codes
- * @author László Pataki 
- *         
+ * @see CIP_Vol1_3.3: AppendixB-Status Codes Table 3-5.29 Connection Manager Service Request Error Codes
+ * @author László Pataki
  */
 
 public class CipException extends Exception
 {
-	private static final long serialVersionUID = 2333733809292443987L;
+    private static final long serialVersionUID = 2333733809292443987L;
 
-	private static HashMap<Integer, String[]> GENERAL_STATUSES = new HashMap<Integer, String[]>();
-	static
-	{
-			//@formatter:off
+    private static HashMap<Integer, String[]> GENERAL_STATUSES = new HashMap<>();
+    static
+    {
+        //@formatter:off
 			GENERAL_STATUSES.put(0x01, new String[]{"Connection failure","A connection related service failed along the connection path."});
 			GENERAL_STATUSES.put(0x02, new String[]{"Resource unavailable","Resources needed for the object to perform the requested service were unavailable."});
 			GENERAL_STATUSES.put(0x03, new String[]{"Invalid parameter value","See Status Code 0x20","which is the preferred value to use for this condition."});
@@ -60,101 +66,106 @@ public class CipException extends Exception
 			GENERAL_STATUSES.put(0x29, new String[]{"Member not settable","A request to modify a non-modifiable member was received."});
 			GENERAL_STATUSES.put(0x2A, new String[]{"Group 2 only server general failure","This error code may only be reported by DeviceNet Group 2 Only servers with 4K or less code space and only in place of Service not supported, Attribute not supported and Attribute not settable."});
 			GENERAL_STATUSES.put(0x2B, new String[]{"Unknown Modbus Error","A CIP to Modbus translator received an unknown Modbus Exception Code."});
-			//@formatter:on
-	}
+		//@formatter:on
+    }
 
-	private static HashMap<Integer, String[]> EXTENDED_STATUSES = new HashMap<Integer, String[]>();
-	static
-	{
-			//@formatter:off
+    private static HashMap<Integer, String[]> EXTENDED_STATUSES = new HashMap<>();
+    static
+    {
+        //@formatter:off
 			EXTENDED_STATUSES.put(0x0107, new String[]{"TARGET CONNECTION NOT FOUND","This extended status code shall be returned in response to the forward_close request, when the connection that is to be closed is not found at the target node. This extended status code shall only be returned by a target node. Routers shall not generate this extended status code. If the specified connection is not found at the intermediate node, the close request shall still be forwarded using the path specified in the Forward_Close request."});
 			EXTENDED_STATUSES.put(0x0204, new String[]{"UNCONNECTED REQUEST TIMED OUT","The Unconnected Request Timed Out error shall occur when the UCMM times out before a reply is received. This may occur for an Unconnected_Send, Forward_Open, or Forward_Close service. This typically means that the UCMM has tried a link specific number of times using a link specific retry timer and has not received an acknowledgement or reply. This may be the result of congestion at the destination node or may be the result of a node not being powered up or present. This extended status code shall be returned by the originating node or any intermediate node."});
 			EXTENDED_STATUSES.put(0x0312, new String[]{"LINK ADDRESS NOT VALID","Link Address specified in Port Segment Not Valid This extended status code is the result of a port segment that specifies a link address that is not valid for the target network type. This extended status code shall not be used for link addresses that are valid for the target network type but do not respond."});
 			EXTENDED_STATUSES.put(0x0318, new String[]{"LINK ADDRESS TO SELF INVALID","Under some conditions (depends on the device), a link address in the Port Segment which points to the same device (loopback to yourself) is invalid."});
-			//@formatter:on
-	}
-	
-	private final int statusCode;
+		//@formatter:on
+    }
 
-	private String statusName;
+    private final int statusCode;
 
-	private String statusDescription;
+    private String statusName;
 
-	private final int extendedCode;
+    private String statusDescription;
 
-	private String extendedStatusName;
+    private final int extendedCode;
 
-	private String extendedStatusDescription;
+    private String extendedStatusName;
 
-	public CipException(final int generalStatusCode, final int extendedStatusCode)
-	{
-		super(String.format("Status: 0x%02X", generalStatusCode)
-				+ " - "
-				+ (GENERAL_STATUSES.containsKey(generalStatusCode) ? Arrays.toString(GENERAL_STATUSES.get(generalStatusCode))
-						: "Unknown, status code between 2C - CF or D0 - FF")
-				+ String.format("Extended: 0x%02X", extendedStatusCode)
-				+ " - "
-				+ (EXTENDED_STATUSES.containsKey(extendedStatusCode) ? Arrays.toString(EXTENDED_STATUSES.get(extendedStatusCode))
-						: "Unknown extended status"));
+    private String extendedStatusDescription;
 
-		this.statusCode = generalStatusCode;
-		this.extendedCode = extendedStatusCode;
+    public CipException(final int generalStatusCode,
+            final int extendedStatusCode)
+    {
+        super(String.format("Status: 0x%02X", generalStatusCode) + " - "
+                + (GENERAL_STATUSES.containsKey(generalStatusCode)
+                        ? Arrays.toString(
+                                GENERAL_STATUSES.get(generalStatusCode))
+                        : "Unknown, status code between 2C - CF or D0 - FF")
+                + String.format("Extended: 0x%02X", extendedStatusCode) + " - "
+                + (EXTENDED_STATUSES.containsKey(extendedStatusCode)
+                        ? Arrays.toString(
+                                EXTENDED_STATUSES.get(extendedStatusCode))
+                        : "Unknown extended status"));
 
-		if (GENERAL_STATUSES.containsKey(generalStatusCode))
-		{
-			this.statusName = GENERAL_STATUSES.get(this.statusCode)[0];
-			this.statusDescription = GENERAL_STATUSES.get(this.statusCode)[1];
-		}
-		if (generalStatusCode >= 0x2C && generalStatusCode <= 0xCF)
-		{
-			this.statusName = "";
-			this.statusDescription = "Reserved by CIP for future extensions";
-		}
-		if (generalStatusCode >= 0xD0 && generalStatusCode <= 0xFF)
-		{
-			this.statusName = "Reserved for Object Class and service errors";
-			this.statusDescription = "This range of error codes is to be used to indicate Object Class specific errors. Use of this range should only be performed when none of the Error Codes presented in this table accurately reflect the error that was encountered.";
-		}
+        this.statusCode = generalStatusCode;
+        this.extendedCode = extendedStatusCode;
 
-		if (EXTENDED_STATUSES.containsKey(extendedStatusCode))
-		{
-			this.extendedStatusName = EXTENDED_STATUSES.get(extendedStatusCode)[0];
-			this.extendedStatusDescription = EXTENDED_STATUSES.get(extendedStatusCode)[1];
-		}
-		else
-		{
-			this.extendedStatusName = "Unknown";
-			this.extendedStatusDescription = "Unknown";
-		}
-	}
+        if (GENERAL_STATUSES.containsKey(generalStatusCode))
+        {
+            this.statusName = GENERAL_STATUSES.get(this.statusCode)[0];
+            this.statusDescription = GENERAL_STATUSES.get(this.statusCode)[1];
+        }
+        if (generalStatusCode >= 0x2C && generalStatusCode <= 0xCF)
+        {
+            this.statusName = "";
+            this.statusDescription = "Reserved by CIP for future extensions";
+        }
+        if (generalStatusCode >= 0xD0 && generalStatusCode <= 0xFF)
+        {
+            this.statusName = "Reserved for Object Class and service errors";
+            this.statusDescription = "This range of error codes is to be used to indicate Object Class specific errors. Use of this range should only be performed when none of the Error Codes presented in this table accurately reflect the error that was encountered.";
+        }
 
-	public int getStatusCode()
-	{
-		return this.statusCode;
-	}
+        if (EXTENDED_STATUSES.containsKey(extendedStatusCode))
+        {
+            this.extendedStatusName = EXTENDED_STATUSES
+                    .get(extendedStatusCode)[0];
+            this.extendedStatusDescription = EXTENDED_STATUSES
+                    .get(extendedStatusCode)[1];
+        }
+        else
+        {
+            this.extendedStatusName = "Unknown";
+            this.extendedStatusDescription = "Unknown";
+        }
+    }
 
-	public String getStatusName()
-	{
-		return this.statusName;
-	}
+    public int getStatusCode()
+    {
+        return this.statusCode;
+    }
 
-	public String getStatusDescription()
-	{
-		return this.statusDescription;
-	}
+    public String getStatusName()
+    {
+        return this.statusName;
+    }
 
-	public int getExtendedStatusCode()
-	{
-		return this.extendedCode;
-	}
+    public String getStatusDescription()
+    {
+        return this.statusDescription;
+    }
 
-	public String getExtendedStatusName()
-	{
-		return this.extendedStatusName;
-	}
+    public int getExtendedStatusCode()
+    {
+        return this.extendedCode;
+    }
 
-	public String getExtendedStatusDescription()
-	{
-		return this.extendedStatusDescription;
-	}
+    public String getExtendedStatusName()
+    {
+        return this.extendedStatusName;
+    }
+
+    public String getExtendedStatusDescription()
+    {
+        return this.extendedStatusDescription;
+    }
 }

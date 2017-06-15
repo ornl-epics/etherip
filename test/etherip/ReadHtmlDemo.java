@@ -21,6 +21,7 @@ import org.junit.Test;
 public class ReadHtmlDemo
 {
     public static final int TIMEOUT_MS = 2000;
+
     @Test
     public void readHtml() throws Exception
     {
@@ -35,8 +36,10 @@ public class ReadHtmlDemo
         buffer.flip();
         System.out.println(toHexdump(buffer));
 
-        final AsynchronousSocketChannel channel = AsynchronousSocketChannel.open();
-        channel.connect(new InetSocketAddress("www.google.com", 80)).get(TIMEOUT_MS, MILLISECONDS);
+        final AsynchronousSocketChannel channel = AsynchronousSocketChannel
+                .open();
+        channel.connect(new InetSocketAddress("www.google.com", 80))
+                .get(TIMEOUT_MS, MILLISECONDS);
 
         channel.write(buffer).get(TIMEOUT_MS, MILLISECONDS);
 
@@ -51,7 +54,9 @@ public class ReadHtmlDemo
             // Assume a buffer that wasn't full indicates the server has no more
             // This is not perfect for HTTP
             if (read < buffer.capacity())
+            {
                 break;
+            }
             read = channel.read(buffer).get(TIMEOUT_MS, MILLISECONDS);
         }
 

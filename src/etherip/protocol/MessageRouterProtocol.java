@@ -13,8 +13,10 @@ import etherip.data.CipException;
 import etherip.types.CNPath;
 import etherip.types.CNService;
 
-/** Message Router PDU (Protocol Data Unit)
- *  @author Kay Kasemir, László Pataki
+/**
+ * Message Router PDU (Protocol Data Unit)
+ *
+ * @author Kay Kasemir, László Pataki
  */
 public class MessageRouterProtocol extends ProtocolAdapter
 {
@@ -31,11 +33,15 @@ public class MessageRouterProtocol extends ProtocolAdapter
     /**
      * Initialize
      *
-     * @param service Service for request
-     * @param path Path for request
-     * @param body Protocol embedded in the message request/response
+     * @param service
+     *            Service for request
+     * @param path
+     *            Path for request
+     * @param body
+     *            Protocol embedded in the message request/response
      */
-    public MessageRouterProtocol(final CNService service, final CNPath path, final Protocol body)
+    public MessageRouterProtocol(final CNService service, final CNPath path,
+            final Protocol body)
     {
         this.service = service;
         this.path = path;
@@ -49,18 +55,24 @@ public class MessageRouterProtocol extends ProtocolAdapter
         return 2 + this.path.getRequestSize() + this.body.getRequestSize();
     }
 
-    /** {@inheritDoc} 
-     * @throws Exception */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws Exception
+     */
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
+    public void encode(final ByteBuffer buf, final StringBuilder log)
+            throws Exception
     {
         buf.put(this.service.getCode());
         this.path.encode(buf, log);
         if (log != null)
         {
             log.append("MR Request\n");
-            log.append("USINT service           : ").append(this.service).append("\n");
-            log.append("USINT path              : ").append(this.path).append("\n");
+            log.append("USINT service           : ").append(this.service)
+                    .append("\n");
+            log.append("USINT path              : ").append(this.path)
+                    .append("\n");
         }
         this.body.encode(buf, log);
     }
@@ -74,13 +86,15 @@ public class MessageRouterProtocol extends ProtocolAdapter
 
     /** {@inheritDoc} */
     @Override
-    public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
+    public void decode(final ByteBuffer buf, final int available,
+            final StringBuilder log) throws Exception
     {
         final byte service_code = buf.get();
         final CNService reply = CNService.forCode(service_code);
         if (reply == null)
         {
-            throw new Exception("Received reply with unknown service code 0x" + Integer.toHexString(service_code));
+            throw new Exception("Received reply with unknown service code 0x"
+                    + Integer.toHexString(service_code));
         }
         if (!reply.isReply())
         {
@@ -101,12 +115,18 @@ public class MessageRouterProtocol extends ProtocolAdapter
         {
             log.append("MR Response\n");
             log.append("USINT service           : ").append(reply).append("\n");
-            log.append("USINT reserved          : 0x").append(Integer.toHexString(reserved)).append("\n");
-            log.append("USINT status            : 0x").append(Integer.toHexString(this.status)).append(" (").append(")\n");
-            log.append("USINT ext. stat. size   : 0x").append(Integer.toHexString(ext_status_size)).append("\n");
+            log.append("USINT reserved          : 0x")
+                    .append(Integer.toHexString(reserved)).append("\n");
+            log.append("USINT status            : 0x")
+                    .append(Integer.toHexString(this.status)).append(" (")
+                    .append(")\n");
+            log.append("USINT ext. stat. size   : 0x")
+                    .append(Integer.toHexString(ext_status_size)).append("\n");
             for (final int ext : this.ext_status)
             {
-                log.append("USINT ext status        : 0x").append(Integer.toHexString(ext)).append(" (").append(")\n");
+                log.append("USINT ext status        : 0x")
+                        .append(Integer.toHexString(ext)).append(" (")
+                        .append(")\n");
             }
         }
         final CNService expected_reply = this.service.getReply();
@@ -124,7 +144,8 @@ public class MessageRouterProtocol extends ProtocolAdapter
 
         if (expected_reply != null && expected_reply != reply)
         {
-            throw new Exception("Expected " + expected_reply + ", got " + reply);
+            throw new Exception(
+                    "Expected " + expected_reply + ", got " + reply);
         }
 
         this.body.decode(buf, available - 4 - 2 * ext_status_size, log);

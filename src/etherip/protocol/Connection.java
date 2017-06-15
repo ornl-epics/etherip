@@ -13,90 +13,112 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
 
-/** Connection to EtherNet/IP device
+/**
+ * Connection to EtherNet/IP device
+ * <p>
+ * Network connection as well as buffer and session info that's used for the duration of a connection.
  *
- *  <p>Network connection as well as buffer and session info
- *  that's used for the duration of a connection.
- *
- *  @author Kay Kasemir, László Pataki
+ * @author Kay Kasemir, László Pataki
  */
 @SuppressWarnings("nls")
 public abstract class Connection implements AutoCloseable
 {
-	/** EtherIP uses little endian */
-	final public static ByteOrder BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
+    /** EtherIP uses little endian */
+    final public static ByteOrder BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 
-	final private static int BUFFER_SIZE = 600;
+    final private static int BUFFER_SIZE = 600;
 
-	protected final int slot;
+    protected final int slot;
 
-	protected final ByteBuffer buffer;
+    protected final ByteBuffer buffer;
 
-	private int session = 0;
+    private int session = 0;
 
-	protected long timeout_ms = 2000;
-	protected int port = 0xAF12;
+    protected long timeout_ms = 2000;
+    protected int port = 0xAF12;
 
-	/** Initialize
-	 *  @param address IP address of device
-	 *  @param slot Slot number 0, 1, .. of the controller within PLC crate
-	 *  @throws Exception on error
-	 */
-	public Connection(final String address, final int slot) throws Exception
-	{
-        logger.log(Level.INFO, "Connecting to {0}:{1}", new Object[] { address, String.format("0x%04X", port) });
-	    this.slot = slot;
-
-		buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
-		buffer.order(BYTE_ORDER);
-	}
-
-	/** @return Slot number 0, 1, .. of the controller within PLC crate */
-	public int getSlot()
+    /**
+     * Initialize
+     *
+     * @param address
+     *            IP address of device
+     * @param slot
+     *            Slot number 0, 1, .. of the controller within PLC crate
+     * @throws Exception
+     *             on error
+     */
+    public Connection(final String address, final int slot) throws Exception
     {
-        return slot;
+        logger.log(Level.INFO, "Connecting to {0}:{1}",
+                new Object[] { address, String.format("0x%04X", this.port) });
+        this.slot = slot;
+
+        this.buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+        this.buffer.order(BYTE_ORDER);
     }
 
-    /** @param session Session ID to be identified with this connection */
-	public void setSession(final int session)
+    /** @return Slot number 0, 1, .. of the controller within PLC crate */
+    public int getSlot()
     {
-	    this.session = session;
+        return this.slot;
+    }
+
+    /**
+     * @param session
+     *            Session ID to be identified with this connection
+     */
+    public void setSession(final int session)
+    {
+        this.session = session;
     }
 
     /** @return Session ID of this connection */
-	public int getSession()
-	{
-	    return session;
+    public int getSession()
+    {
+        return this.session;
     }
 
-	/** @return {@link ByteBuffer} */
+    /** @return {@link ByteBuffer} */
     public ByteBuffer getBuffer()
-	{
-		return buffer;
-	}
+    {
+        return this.buffer;
+    }
 
-	public abstract boolean isOpen() throws Exception;
-	
-	/** Write protocol data
-	 *  @param encoder {@link ProtocolEncoder} used to <code>encode</code> buffer
-	 *  @throws Exception on error
-	 */
+    public abstract boolean isOpen() throws Exception;
+
+    /**
+     * Write protocol data
+     *
+     * @param encoder
+     *            {@link ProtocolEncoder} used to <code>encode</code> buffer
+     * @throws Exception
+     *             on error
+     */
     public abstract void write(final ProtocolEncoder encoder) throws Exception;
 
-	/** Read protocol data
-	 *  @param decoder {@link ProtocolDecoder} used to <code>decode</code> buffer
-	 *  @throws Exception on error
-	 */
-    protected abstract void read(final ProtocolDecoder decoder) throws Exception;
-    
-	/** Write protocol request and handle response
-	 *  @param protocol {@link Protocol}
-	 *  @throws Exception on error
-	 */
-	public void execute(final Protocol protocol) throws Exception
+    /**
+     * Read protocol data
+     *
+     * @param decoder
+     *            {@link ProtocolDecoder} used to <code>decode</code> buffer
+     * @throws Exception
+     *             on error
+     */
+    protected abstract void read(final ProtocolDecoder decoder)
+            throws Exception;
+
+    /**
+     * Write protocol request and handle response
+     *
+     * @param protocol
+     *            {@link Protocol}
+     * @throws Exception
+     *             on error
+     */
+    public void execute(final Protocol protocol) throws Exception
     {
-		write(protocol);
-		read(protocol);
+        this.write(protocol);
+        this.read(protocol);
     }
 
 }

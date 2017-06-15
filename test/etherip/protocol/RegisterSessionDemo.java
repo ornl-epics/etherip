@@ -13,11 +13,12 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import etherip.EtherNetIP;
 import etherip.TestSettings;
 
-/** JUnitDemo of {@link RegisterSession}
- *  @author Kay Kasemir
+/**
+ * JUnitDemo of {@link RegisterSession}
+ *
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class RegisterSessionDemo
@@ -25,21 +26,20 @@ public class RegisterSessionDemo
     @Test
     public void testRegisterSession() throws Exception
     {
-    	TestSettings.logAll();
+        TestSettings.logAll();
 
-    	try
-    	(
-			TcpConnection tcpConnection = new TcpConnection(TestSettings.get("plc"), TestSettings.getInt("slot"));
-		)
-		{
-    		final RegisterSession register = new RegisterSession();
-    		tcpConnection.write(register);
+        try (TcpConnection tcpConnection = new TcpConnection(
+                TestSettings.get("plc"), TestSettings.getInt("slot"));)
+        {
+            final RegisterSession register = new RegisterSession();
+            tcpConnection.write(register);
 
-    		assertThat(register.getSession(), equalTo(0));
+            assertThat(register.getSession(), equalTo(0));
 
-    		tcpConnection.read(register);
-    		System.out.println("Received session 0x" + Integer.toHexString(register.getSession()));
-    		assertThat(register.getSession(), not(equalTo(0)));
-		}
+            tcpConnection.read(register);
+            System.out.println("Received session 0x"
+                    + Integer.toHexString(register.getSession()));
+            assertThat(register.getSession(), not(equalTo(0)));
+        }
     }
 }

@@ -14,8 +14,10 @@ import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
-/** JUnit demo of locking, mostly meant to view in JProfiler
- *  @author Kay Kasemir
+/**
+ * JUnit demo of locking, mostly meant to view in JProfiler
+ *
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class LockDemo
@@ -37,7 +39,8 @@ public class LockDemo
                         // Block other thread
                         synchronized (LockDemo.this)
                         {
-                            System.out.println("Thread " + Thread.currentThread().getName());
+                            System.out.println("Thread "
+                                    + Thread.currentThread().getName());
                             SECONDS.sleep(2);
                         }
                         // Without yield, this thread is quite likely to run again immediately
@@ -47,7 +50,7 @@ public class LockDemo
                         SECONDS.sleep(1);
                     }
                 }
-                catch (InterruptedException ex)
+                catch (final InterruptedException ex)
                 {
                     ex.printStackTrace();
                 }
@@ -59,7 +62,7 @@ public class LockDemo
         pool.submit(task);
 
         SECONDS.sleep(10);
-        run = false;
+        this.run = false;
         pool.awaitTermination(5, SECONDS);
     }
 }

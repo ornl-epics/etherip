@@ -14,8 +14,10 @@ import java.nio.ByteOrder;
 
 import org.junit.Test;
 
-/** JUnit demo of ByteBuffer orderring
- *  @author Kay Kasemir
+/**
+ * JUnit demo of ByteBuffer orderring
+ *
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class OrderDemo

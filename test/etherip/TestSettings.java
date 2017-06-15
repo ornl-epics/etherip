@@ -28,7 +28,7 @@ public class TestSettings
         {
             settings.load(new FileInputStream("test.properties"));
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             ex.printStackTrace();
         }
@@ -45,19 +45,21 @@ public class TestSettings
     }
 
     /** Configure logging */
-	public static void logAll()
+    public static void logAll()
     {
-		Logger logger = Logger.getLogger("");
-		logger.setLevel(Level.FINEST);
-		for (Handler handler : logger.getHandlers())
-			handler.setLevel(Level.FINEST);
+        final Logger logger = Logger.getLogger("");
+        logger.setLevel(Level.FINEST);
+        for (final Handler handler : logger.getHandlers())
+        {
+            handler.setLevel(Level.FINEST);
+        }
     }
 
-	/** @return {@link ByteBuffer} suitable for tests */
-	public static ByteBuffer getBuffer()
-	{
-		final ByteBuffer buf = ByteBuffer.allocate(100);
-		buf.order(Connection.BYTE_ORDER);
-		return buf;
-	}
+    /** @return {@link ByteBuffer} suitable for tests */
+    public static ByteBuffer getBuffer()
+    {
+        final ByteBuffer buf = ByteBuffer.allocate(100);
+        buf.order(Connection.BYTE_ORDER);
+        return buf;
+    }
 }

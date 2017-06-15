@@ -9,36 +9,47 @@ package etherip.protocol;
 
 import java.nio.ByteBuffer;
 
-/** Decode a <code>String</code> attribute
- *  @author Kay Kasemir
+/**
+ * Decode a <code>String</code> attribute
+ *
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class GetStringAttributeProtocol extends ProtocolAdapter
 {
-	private String value;
+    private String value;
 
-	/** {@inheritDoc} */
-	@Override
-	public void decode(final ByteBuffer buf, final int available, final StringBuilder log) throws Exception
-	{
-		final int len = buf.get() & 0x7F;
-		if (len > available-1)
-			throw new Exception("String length of " + len + " exceeds remaining data (" + (available-1) + " bytes)");
-		final byte[] raw = new byte[len];
-		buf.get(raw);
-		value = new String(raw);
-		if (log != null)
-			log.append("String value      : ").append(value).append("\n");
+    /** {@inheritDoc} */
+    @Override
+    public void decode(final ByteBuffer buf, final int available,
+            final StringBuilder log) throws Exception
+    {
+        final int len = buf.get() & 0x7F;
+        if (len > available - 1)
+        {
+            throw new Exception(
+                    "String length of " + len + " exceeds remaining data ("
+                            + (available - 1) + " bytes)");
+        }
+        final byte[] raw = new byte[len];
+        buf.get(raw);
+        this.value = new String(raw);
+        if (log != null)
+        {
+            log.append("String value      : ").append(this.value).append("\n");
+        }
 
-		// Skip remaining bytes
-		final int rest = available - 1 - len;
-		if (rest > 0)
-			buf.position(buf.position() + rest);
-	}
+        // Skip remaining bytes
+        final int rest = available - 1 - len;
+        if (rest > 0)
+        {
+            buf.position(buf.position() + rest);
+        }
+    }
 
-	/** @return Value read from response */
-	final public String getValue()
-	{
-		return value;
-	}
+    /** @return Value read from response */
+    final public String getValue()
+    {
+        return this.value;
+    }
 }

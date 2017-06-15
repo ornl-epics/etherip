@@ -21,7 +21,8 @@ public class HexdumpTest
     @Test
     public void hexTest()
     {
-        String string = Hexdump.toCompactHexdump(ByteBuffer.wrap("Hello!\n".getBytes()));
+        final String string = Hexdump
+                .toCompactHexdump(ByteBuffer.wrap("Hello!\n".getBytes()));
         System.out.println(string);
         assertThat(string, equalTo("0000 - 48 65 6C 6C 6F 21 0A - Hello!."));
     }

@@ -12,9 +12,10 @@ import java.nio.ByteBuffer;
 import etherip.types.CIPData;
 import etherip.types.CNService;
 
-/** Protocol body for {@link CNService#CIP_WriteData}
+/**
+ * Protocol body for {@link CNService#CIP_WriteData}
  *
- *  @author Kay Kasemir
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
 public class CIPWriteDataProtocol extends ProtocolAdapter
@@ -29,14 +30,18 @@ public class CIPWriteDataProtocol extends ProtocolAdapter
     @Override
     public int getRequestSize()
     {
-        return data.getEncodedSize();
+        return this.data.getEncodedSize();
     }
 
     @Override
-    public void encode(final ByteBuffer buf, final StringBuilder log) throws Exception
+    public void encode(final ByteBuffer buf, final StringBuilder log)
+            throws Exception
     {
-        data.encode(buf);
+        this.data.encode(buf);
         if (log != null)
-            log.append("USINT type, data        : ").append(data).append("\n");
+        {
+            log.append("USINT type, data        : ").append(this.data)
+                    .append("\n");
+        }
     }
 }
