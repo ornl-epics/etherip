@@ -40,8 +40,11 @@ public class EtherIPDemo
     @Test
     public void testConnectTcp() throws Exception
     {
-        try (EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
-                TestSettings.getInt("slot"));)
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
         {
             plc.connectTcp();
 
@@ -67,8 +70,11 @@ public class EtherIPDemo
         Logger.getLogger("").setLevel(Level.INFO);
 
         TestSettings.logAll();
-        try (EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
-                TestSettings.getInt("slot"));)
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
         {
             plc.connectUdp();
 
@@ -98,8 +104,11 @@ public class EtherIPDemo
     @Test
     public void testFloat() throws Exception
     {
-        try (EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
-                TestSettings.getInt("slot"));)
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
         {
             plc.connectTcp();
 
@@ -128,10 +137,48 @@ public class EtherIPDemo
     }
 
     @Test
+    public void testInt() throws Exception
+    {
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
+        {
+            plc.connectTcp();
+
+            final String tag = TestSettings.get("int_tag");
+
+            System.out.println("\n*\n* int '" + tag + "':\n*\n");
+            CIPData value = plc.readTag(tag);
+            System.out.println(value);
+            assertThat(value, not(nullValue()));
+            value.set(0, 42);
+            plc.writeTag(tag, value);
+
+            value = plc.readTag(tag);
+            assertThat(value, not(nullValue()));
+            System.out.println("Changed to " + value);
+            assertThat(value.getNumber(0).intValue(), equalTo(42));
+            
+            value.set(0, 47);
+            plc.writeTag(tag, value);
+
+            value = plc.readTag(tag);
+            assertThat(value, not(nullValue()));
+            System.out.println("Changed to " + value);
+            assertThat(value.getNumber(0).intValue(), equalTo(47));
+        }
+    }
+    
+    @Test
     public void testBool() throws Exception
     {
-        try (EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
-                TestSettings.getInt("slot"));)
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
         {
             plc.connectTcp();
 
@@ -140,7 +187,9 @@ public class EtherIPDemo
 
             CIPData value = plc.readTag(tag);
             System.out.println("Original Value: " + value);
-
+            System.out.flush();
+            System.err.flush();
+            
             value = new CIPData(Type.BOOL, 1);
 
             value.set(0, 1);
@@ -169,8 +218,11 @@ public class EtherIPDemo
     @Test
     public void testString() throws Exception
     {
-        try (EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
-                TestSettings.getInt("slot"));)
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
         {
             plc.connectTcp();
 
@@ -183,13 +235,9 @@ public class EtherIPDemo
             assertThat(value.isNumeric(), equalTo(false));
             String new_value = value.getString();
             if (new_value.equals("test"))
-            {
                 new_value = "Testing!";
-            }
             else
-            {
                 new_value = "test";
-            }
             System.out.println("Writing '" + new_value + "'");
             value.setString(new_value);
             plc.writeTag(tag, value);
@@ -203,14 +251,18 @@ public class EtherIPDemo
     @Test
     public void testMultiRead() throws Exception
     {
-        try (EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
-                TestSettings.getInt("slot"));)
+        try
+        (
+            EtherNetIP plc = new EtherNetIP(TestSettings.get("plc"),
+                                            TestSettings.getInt("slot"));
+        )
         {
             plc.connectTcp();
 
             System.out.println("\n*\n* Multi read:\n*\n");
             final String[] tags = new String[] { TestSettings.get("float_tag"),
                     TestSettings.get("bool_tag"),
+                    TestSettings.get("int_tag"),
                     TestSettings.get("string_tag") };
             final CIPData[] results = plc.readTags(tags);
             assertThat(results, not(nullValue()));
