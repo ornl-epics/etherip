@@ -10,6 +10,7 @@ package etherip;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import etherip.data.CipException;
@@ -59,6 +61,7 @@ public class EtherIPDemo
     }
 
     @Test
+    @Ignore
     public void testConnectUdp() throws Exception
     {
         Logger.getLogger("").setLevel(Level.INFO);
@@ -111,7 +114,16 @@ public class EtherIPDemo
 
             value = plc.readTag(tag);
             assertThat(value, not(nullValue()));
-            System.out.println(value);
+            System.out.println("Changed to " + value);
+            assertEquals(47.11, value.getNumber(0).doubleValue(), 0.01);
+            
+            value.set(0, 48.12);
+            plc.writeTag(tag, value);
+
+            value = plc.readTag(tag);
+            assertThat(value, not(nullValue()));
+            System.out.println("Changed to " + value);
+            assertEquals(48.12, value.getNumber(0).doubleValue(), 0.01);
         }
     }
 
