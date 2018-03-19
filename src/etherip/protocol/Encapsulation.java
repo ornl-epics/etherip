@@ -29,8 +29,6 @@ public class Encapsulation implements Protocol
      * Encapsulation commands
      * <p>
      * Spec 4 p. 164
-     *
-     * @author Kay Kasemir
      */
     public enum Command
     {
@@ -76,12 +74,10 @@ public class Encapsulation implements Protocol
         }
     };
 
+    private final byte[] context = Transaction.format(Transaction.nextTransaction());;
     final private Command command;
     private int session;
     final private Protocol body;
-
-    final private static byte[] context = new byte[] { 'F', 'u', 'n', 's', 't',
-            'u', 'f', 'f' };
 
     public Encapsulation(final Command command, final int session,
             final Protocol body)
@@ -201,12 +197,10 @@ public class Encapsulation implements Protocol
 
         final int status = buf.getInt();
 
-        final byte[] context = new byte[8];
-        buf.get(context);
-        if (!Arrays.equals(context, Encapsulation.context))
-        {
-            throw new Exception("Received context " + Hexdump.toAscii(context));
-        }
+        final byte[] recvd_context = new byte[8];
+        buf.get(recvd_context);
+        if (!Arrays.equals(recvd_context, context))
+            throw new Exception("Received context " + Hexdump.toAscii(recvd_context) + ", expected " + Hexdump.toAscii(context));
 
         final int options = buf.getInt();
 

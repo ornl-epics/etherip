@@ -62,7 +62,7 @@ import etherip.types.CNService;
 @SuppressWarnings("nls")
 public class EtherNetIP implements AutoCloseable
 {
-    final public static String version = "1.3";
+    final public static String version = "1.4";
 
     final public static Logger logger = Logger
             .getLogger(EtherNetIP.class.getName());
