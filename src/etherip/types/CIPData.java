@@ -158,16 +158,7 @@ final public class CIPData
             return (short) (this.data.capacity() / this.type.element_size);
         case STRUCT:
         {
-            final Type el_type = Type.forCode(this.data.getShort(0));
-            if (el_type == Type.STRUCT_STRING)
-            {
-                return 1;
-            }
-            else
-            {
-                throw new Exception("Structure elements of type " + this.type
-                        + " not handled");
-            }
+            return 1; // We do not know without byte packing details but at least 1. 
         }
         default:
             throw new Exception("Type " + this.type + " not handled");
