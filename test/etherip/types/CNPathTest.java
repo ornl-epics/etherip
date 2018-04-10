@@ -29,13 +29,28 @@ public class CNPathTest
         final CNPath path = Identity().instance(1).attr(0x7);
         System.out.println(path.toString());
         assertThat(path.toString(), equalTo(
-                "Path (3 el) Class(0x20) 0x1 (Identity), instance(0x24) 1, attrib.(0x30) 0x7"));
+                "Path (3 el) Class(0x20 0x1) Identity, instance(0x24) 1, attribute(0x30) 7"));
 
         final ByteBuffer buf = ByteBuffer.allocate(20);
         path.encode(buf, null);
         buf.flip();
         assertThat(Hexdump.toCompactHexdump(buf),
                 equalTo("0000 - 03 20 01 24 01 30 07 - . .$.0."));
+    }
+
+    @Test
+    public void testClassPathWithLargeInstance() throws Exception
+    {
+        final CNPath path = Identity().instance(456).attr(0x7);
+        System.out.println(path.toString());
+        assertThat(path.toString(), equalTo(
+                "Path (3 el) Class(0x20 0x1) Identity, instance(0x25) 456, attribute(0x30) 7"));
+
+        final ByteBuffer buf = ByteBuffer.allocate(20);
+        path.encode(buf, null);
+        buf.flip();
+        assertThat(Hexdump.toCompactHexdump(buf),
+                equalTo("0000 - 04 20 01 25 00 01 C8 30 07 - . .%...0."));
     }
 
     @Test
