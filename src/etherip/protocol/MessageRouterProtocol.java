@@ -30,6 +30,8 @@ public class MessageRouterProtocol extends ProtocolAdapter
 
     private int[] ext_status = new int[0];
 
+	private boolean partialTransfert = false;;
+
     /**
      * Initialize
      *
@@ -132,13 +134,18 @@ public class MessageRouterProtocol extends ProtocolAdapter
         final CNService expected_reply = this.service.getReply();
         if (this.status != 0)
         {
-            if (ext_status_size > 0)
-            {
-                throw new CipException(this.status, this.ext_status[0]);
+            if (this.status == 6) { // Not an error, we need to ask for remaining
+            	this.partialTransfert = true;
             }
-            else
-            {
-                throw new CipException(this.status, 0);
+            else {
+	            if (ext_status_size > 0)
+	            {
+	                throw new CipException(this.status, this.ext_status[0]);
+	            }
+	            else
+	            {
+	                throw new CipException(this.status, 0);
+	            }
             }
         }
 
@@ -149,6 +156,10 @@ public class MessageRouterProtocol extends ProtocolAdapter
         }
 
         this.body.decode(buf, available - 4 - 2 * ext_status_size, log);
+    }
+    
+    public boolean isPartialTransfert() {
+    	return partialTransfert;
     }
 
     /** @return Status code of response */
