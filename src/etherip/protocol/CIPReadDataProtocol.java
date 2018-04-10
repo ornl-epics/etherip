@@ -32,7 +32,7 @@ public class CIPReadDataProtocol extends ProtocolAdapter
     }
 
     /**
-     * Create a read protocol message that reqeusts one or more elements if request is an array
+     * Create a read protocol message that requests one or more elements if request is an array
      *
      * @param count
      */
@@ -53,7 +53,7 @@ public class CIPReadDataProtocol extends ProtocolAdapter
         buf.putShort(this.count); // elements
         if (log != null)
         {
-            log.append("USINT elements          : 1\n");
+            log.append("USINT elements          : ").append(this.count).append("\n");
         }
     }
 

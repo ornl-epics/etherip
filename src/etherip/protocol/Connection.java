@@ -115,7 +115,7 @@ public abstract class Connection implements AutoCloseable
      * @throws Exception
      *             on error
      */
-    public void execute(final Protocol protocol) throws Exception
+    public synchronized void execute(final Protocol protocol) throws Exception
     {
         this.write(protocol);
         this.read(protocol);
