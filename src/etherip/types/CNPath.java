@@ -95,8 +95,8 @@ abstract public class CNPath implements Protocol
      *            Name of the tag to put into symbol path
      * @return {@link CNPath}
      */
-    public static CNPath Symbol(final String name)
+    public static CNSymbolPath Symbol(final String path)
     {
-        return new CNSymbolPath(name);
+        return new CNSymbolPath(path);
     }
 }
