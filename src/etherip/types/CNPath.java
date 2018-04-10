@@ -72,6 +72,22 @@ abstract public class CNPath implements Protocol
         return new CNClassPath(0xf6, "Ethernet Link");
     }
 
+    /*
+     * Logix5000 Data Access Class to read symbol names and types
+     */
+    public static CNClassPath SymbolList()
+    {
+        return new CNClassPath(0x6B, "Symbol List").instance(0);
+    }
+    
+    /*
+     * Logix5000 Data Access Class to read template attributes
+     */
+    public static CNClassPath TemplateAttributes()
+    {
+        return new CNClassPath(0x6C, "Template attributes");
+    }
+
     /**
      * Create symbol path
      *
