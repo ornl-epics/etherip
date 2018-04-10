@@ -14,6 +14,8 @@ import static etherip.types.CNService.Get_Attribute_All;
 import static etherip.types.CNService.Get_Attribute_Single;
 
 import java.nio.BufferUnderflowException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,6 +45,7 @@ import etherip.protocol.ListServicesProtocol.Service;
 import etherip.protocol.MRChipReadProtocol;
 import etherip.protocol.MRChipWriteProtocol;
 import etherip.protocol.MessageRouterProtocol;
+import etherip.protocol.Protocol;
 import etherip.protocol.ProtocolAdapter;
 import etherip.protocol.RegisterSession;
 import etherip.protocol.SendRRDataProtocol;
@@ -66,6 +69,8 @@ public class EtherNetIP implements AutoCloseable
 
     final public static Logger logger = Logger
             .getLogger(EtherNetIP.class.getName());
+
+	private static final int MAX_REQUEST_SIZE = 450;
 
     final private String address;
     final private int slot;
@@ -423,6 +428,12 @@ public class EtherNetIP implements AutoCloseable
 		return this.readTag(tag, (short) 1);
 	}
 
+	public void executeRequest(Protocol request) throws Exception {
+		final Encapsulation encap = new Encapsulation(SendRRData, this.connection.getSession(), 
+				new SendRRDataProtocol(new UnconnectedSendProtocol(slot, request)));
+		connection.execute(encap);
+	}
+
     /** Read a single array tag
      *  @param tag Name of tag
      *  @param count Number of array elements to read
@@ -450,19 +461,37 @@ public class EtherNetIP implements AutoCloseable
      */
 	public CIPData[] readTags(final String... tags) throws Exception
 	{
+		return readTags(100, tags);
+    }
+
+    /** Read multiple strings tags in one network transaction.
+     *  Transaction size is adjsuted for the size of string response.
+     *  @param tags Tag names
+     *  @return Current values of the tags
+     *  @throws Exception on error
+     */
+	public CIPData[] readStringTags(final String... tags) throws Exception
+	{
+		return readTags(5, tags);
+    }
+	
+    /** Read multiple strings tags in one network transaction.
+     *  Messages are splitted in groups with a maximum number of elements and total request size.
+     *  maxGroupSize can be large for small atomic type reads, for large response like string reads, the number should be reduce to make 
+     *  sure the response fit in a controller total response size limit (about 500 bytes for Logix 5000).
+     *  @param maxNumberOfRequestsPerGroup maximum number of requests allowed in a single transaction.
+     *  @param tags Tag names
+     *  @return Current values of the tags
+     *  @throws Exception on error
+     */
+	public CIPData[] readTags(final int maxNumberOfRequestsPerGroup, final String... tags) throws Exception
+	{
 	    final MRChipReadProtocol[] reads = new MRChipReadProtocol[tags.length];
 	    for (int i=0; i<reads.length; ++i)
         {
             reads[i] = new MRChipReadProtocol(tags[i]);
         }
-
-	    final Encapsulation encap =
-            new Encapsulation(SendRRData, this.connection.getSession(),
-                new SendRRDataProtocol(
-                    new UnconnectedSendProtocol(this.slot,
-                        new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
-                            new CIPMultiRequestProtocol(reads)))));
-	    this.connection.execute(encap);
+	    sendMultiMessages(maxNumberOfRequestsPerGroup, reads);
 
 	    final CIPData[] results = new CIPData[reads.length];
         for (int i=0; i<results.length; ++i)
@@ -471,6 +500,50 @@ public class EtherNetIP implements AutoCloseable
         }
 
         return results;
+    }
+
+    /** send multiple messages in a single transaction. 
+     *  Messages are splitted in groups with a maximum number of elements and total request size.
+     *  maxGroupSize can be large for small atomic type reads, for large response like string reads, the number should be reduce to make 
+     *  sure the response fit in a controller total response size limit (about 500 bytes for Logix 5000).
+     *  @param maxNumberOfRequestsPerGroup maximum number of requests allowed in a single transaction.
+     *  @param messages messages to send
+     *  @throws Exception on error
+     */
+	public void sendMultiMessages(final int maxNumberOfRequestsPerGroup, final MessageRouterProtocol... messages) throws Exception
+	{
+		int currentGroupByteCount = 0;
+		List<MessageRouterProtocol> groupMessages = new ArrayList<>();
+		
+		for (MessageRouterProtocol message : messages) {
+			int messageSize = message.getRequestSize();
+			if (currentGroupByteCount + messageSize > MAX_REQUEST_SIZE || groupMessages.size() == maxNumberOfRequestsPerGroup) {
+				executeMultiMessages(groupMessages.toArray(new MessageRouterProtocol[groupMessages.size()]));
+				currentGroupByteCount = 0;
+				groupMessages.clear();
+			}
+			currentGroupByteCount += messageSize;
+			groupMessages.add(message);
+		}
+		if (groupMessages.size() > 0) {
+			executeMultiMessages(groupMessages.toArray(new MessageRouterProtocol[groupMessages.size()]));
+		}
+    }
+
+    /** send multiple messages to controller in a single transaction. 
+     *  Messages are assumed to fit in controller limits for request and response sizes.
+     *  @param messages messages to send
+     *  @throws Exception on error
+     */
+	private void executeMultiMessages(final MessageRouterProtocol[] messages) throws Exception
+	{
+	    final Encapsulation encap =
+            new Encapsulation(SendRRData, this.connection.getSession(),
+                new SendRRDataProtocol(
+                    new UnconnectedSendProtocol(this.slot,
+                        new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
+                            new CIPMultiRequestProtocol(messages)))));
+	    this.connection.execute(encap);
     }
 
 	/** Write a tag
@@ -515,6 +588,8 @@ public class EtherNetIP implements AutoCloseable
                                         new CIPMultiRequestProtocol(writes)))));
         this.connection.execute(encap);
     }
+	
+	
 
 	//@formatter:on
 
