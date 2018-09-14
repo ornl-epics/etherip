@@ -24,17 +24,17 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings("nls")
 public class Transaction
 {
-    private static final AtomicLong transaction = new AtomicLong(0);
-
+    // SYNC on access
+    private static long transaction;
     static long nextTransaction()
     {
-        return transaction.accumulateAndGet(1, (value, plus) ->
+        synchronized(Transaction.class)
         {
-            long result = value + plus;
-            if (result > 0xffffffffL)
-                return 1;
-            return result;
-        });
+            ++transaction;
+            if (transaction > 0xffffffffL)
+                transaction = 1;
+            return transaction;
+        }
     }
 
     static byte[] format(final long transaction)
