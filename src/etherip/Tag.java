@@ -170,7 +170,7 @@ public class Tag
      *
      * @return {@link CIPData}
      */
-    synchronized public CIPData getValue()
+    synchronized public CIPData getData()
     {
         return this.data;
     }
@@ -183,7 +183,7 @@ public class Tag
      * @param data
      *            {@link CIPData}
      */
-    synchronized void setValue(final CIPData data)
+    synchronized void setData(final CIPData data)
     {
         this.data = data;
         for (final TagListener listener : this.listeners)

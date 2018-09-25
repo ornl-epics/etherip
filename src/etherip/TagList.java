@@ -102,7 +102,7 @@ public class TagList
                     break;
                 default:
                     readwrite[i] = new MRChipWriteProtocol(tag.getName(),
-                            tag.getValue());
+                            tag.getData());
                     tag.setState(State.WRITING);
                 }
             }
@@ -128,7 +128,7 @@ public class TagList
                 case READING:
                     // Read, update the tag's value
                     final MRChipReadProtocol reader = (MRChipReadProtocol) readwrite[i];
-                    tag.setValue(reader.getData());
+                    tag.setData(reader.getData());
                     logger.log(Level.FINE, "Read {0}", tag);
                     break;
                 case WRITING:

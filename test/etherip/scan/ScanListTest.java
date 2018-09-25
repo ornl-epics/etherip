@@ -105,7 +105,7 @@ public class ScanListTest implements TagListener
         assertThat(this.updates.getCount(), equalTo(0l));
 
         // Increment value of tag
-        final Number value = tag1.getValue().getNumber(0);
+        final Number value = tag1.getData().getNumber(0);
         System.out.println(tag1.getName() + " is " + value);
         System.out.println(" .. incrementing .. ");
         tag1.setWriteValue(0, value.intValue() + 1);
@@ -116,12 +116,12 @@ public class ScanListTest implements TagListener
         // In here, we simply wait. In the console, you should see that a readback
         // arrived with the new value.
         Thread.sleep(2000);
-        while (tag1.getValue().equals(value))
+        while (tag1.getData().equals(value))
         {
             Thread.sleep(200);
         }
 
-        System.out.println(tag1.getName() + " changed to " + tag1.getValue());
+        System.out.println(tag1.getName() + " changed to " + tag1.getData());
 
         scanner.stop();
 
