@@ -31,15 +31,13 @@ import etherip.protocol.TcpConnection;
  * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
-public class ScanListTest implements TagListener
-{
-    final private CountDownLatch updates = new CountDownLatch(5);
+public class ScanListTest implements TagListener {
+    final private CountDownLatch updates = new CountDownLatch(10);
     final private CountDownLatch errors = new CountDownLatch(5);
     private TcpConnection connection;
 
     @Before
-    public void setup() throws Exception
-    {
+    public void setup() throws Exception {
         TestSettings.logAll();
 
         this.connection = new TcpConnection(TestSettings.get("plc"),
@@ -50,37 +48,35 @@ public class ScanListTest implements TagListener
     }
 
     @After
-    public void shutdown() throws Exception
-    {
+    public void shutdown() throws Exception {
         this.connection.close();
     }
 
     @Override
-    public void tagUpdate(final Tag tag)
-    {
+    public void tagUpdate(final Tag tag) {
         System.out.println("Update: " + tag);
         this.updates.countDown();
     }
 
     @Override
-    public void tagError(final Tag tag)
-    {
+    public void tagError(final Tag tag) {
         System.out.println("Error: " + tag);
         this.errors.countDown();
     }
 
     @Test
-    public void testScanListRead() throws Exception
-    {
+    public void testScanListRead() throws Exception {
         Logger.getLogger("").setLevel(Level.CONFIG);
 
         final Scanner scanner = new Scanner(this.connection);
         final Tag tag1 = scanner.add(1.0, TestSettings.get("float_tag"));
         final Tag tag2 = scanner.add(2.0, TestSettings.get("bool_tag"));
+//        final Tag tag3 = scanner.add(1.1, TestSettings.get("invalid_tag"));
 
         tag1.addListener(this);
         tag2.addListener(this);
-        this.updates.await(10, SECONDS);
+//        tag3.addListener(this);
+        this.updates.await(10,SECONDS);
 
         assertThat(this.updates.getCount(), equalTo(0l));
 
@@ -91,8 +87,7 @@ public class ScanListTest implements TagListener
     }
 
     @Test(timeout = 20000)
-    public void testScanListWrite() throws Exception
-    {
+    public void testScanListWrite() throws Exception {
         Logger.getLogger("").setLevel(Level.CONFIG);
 
         final Scanner scanner = new Scanner(this.connection);
@@ -116,8 +111,7 @@ public class ScanListTest implements TagListener
         // In here, we simply wait. In the console, you should see that a readback
         // arrived with the new value.
         Thread.sleep(2000);
-        while (tag1.getData().equals(value))
-        {
+        while (tag1.getData().equals(value)) {
             Thread.sleep(200);
         }
 
@@ -130,8 +124,7 @@ public class ScanListTest implements TagListener
     }
 
     @Test
-    public void testScanListError() throws Exception
-    {
+    public void testScanListError() throws Exception {
         final Scanner scanner = new Scanner(this.connection);
         final Tag tag = scanner.add(1.0, TestSettings.get("invalid_tag"));
 

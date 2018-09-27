@@ -188,12 +188,10 @@ public class Tag
         this.data = data;
         for (final TagListener listener : this.listeners)
         {
-            if (data == null)
-            {
+            if (data == null){
                 listener.tagError(this);
             }
-            else
-            {
+            else{
                 listener.tagUpdate(this);
             }
         }
