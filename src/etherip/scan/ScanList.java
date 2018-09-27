@@ -21,7 +21,7 @@ import etherip.protocol.Connection;
  *
  * @author Kay Kasemir
  */
-class ScanList extends TimerTask
+public class ScanList extends TimerTask
 {
     final private double period;
     final private Connection connection;

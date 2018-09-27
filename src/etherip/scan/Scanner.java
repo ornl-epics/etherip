@@ -19,7 +19,7 @@ import etherip.protocol.Connection;
  *
  * @author Kay Kasemir
  */
-class Scanner
+public class Scanner
 {
     final private Connection connection;
     final Timer timer = new Timer("Scan Timer");
