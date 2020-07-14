@@ -76,11 +76,9 @@ public class EtherNetIP implements AutoCloseable
     final private int slot;
     private Connection connection = null;
 
-    /**
-     * Initialize
-     *
-     * @param address
-     *            IP address of device
+    /** Initialize
+     *  @param address IP address of device
+     *  @param slot Slot (0, 1, ...) of the controller on the backplane
      */
     public EtherNetIP(final String address, final int slot)
     {
