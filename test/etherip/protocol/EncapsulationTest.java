@@ -69,7 +69,7 @@ public class EncapsulationTest
         final String string = Hexdump.toCompactHexdump(send);
         System.out.println(string);
         assertThat(string, equalTo(
-                "0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 46 75 6E 73 - d.*.........Funs\n0010 - 74 75 66 66 00 00 00 00 - tuff...."));
+                "0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 30 30 30 30 - d.*.........0000\n0010 - 30 30 30 45 00 00 00 00 - 000E...."));
 
         ByteBuffer receive = ByteBuffer.allocate(100);
         receive.order(Connection.BYTE_ORDER);
