@@ -634,4 +634,8 @@ public class EtherNetIP implements AutoCloseable
                 .append("\n");
         return buf.toString();
     }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
 }

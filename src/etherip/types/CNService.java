@@ -24,8 +24,10 @@ public enum CNService
     CIP_ReadData(0x4C), // Logix5000 Data Access
     CIP_ReadDataFragmented(0x52), // Logix5000 Data Access
     CIP_WriteData(0x4D), // Logix5000 Data Access
+    CM_ForwardClose(0x4E),
     CIP_WriteDataFragmented(0x53), // Logix5000 Data Access
     CM_Unconnected_Send(0x52),
+    CM_ForwardOpen(0x54),
     Get_Instance_Attribute_List(0x55), // Logix5000 Data Access
     Get_Connection_Data(0x56), // CIP VOL1_3.3: 3-5.5
     Get_Attribute_All_Reply(0x01 | 0x80),
@@ -35,7 +37,9 @@ public enum CNService
     CIP_ReadData_Reply(0x4C | 0x80),
     CIP_ReadDataFragmented_Reply(0x52 | 0x80),
     CIP_WriteData_Reply(0x4D | 0x80),
+    CM_ForwardClose_Reply(0x4E | 0x80),
     CIP_WriteDataFragmente_Reply(0x53 | 0x80), // Logix5000 Data Access
+    CM_ForwardOpen_Reply(0x54 | 0x80),
     Get_Instance_Attribute_List_Reply(0x55 | 0x80), // Logix5000 Data Access
     CM_Unconnected_Send_Reply(0x52 | 0x80);
 
