@@ -36,6 +36,8 @@ public class Main
         System.out.println("-s " + slot +   "           Controller slot in ControlLogix crate");
         System.out.println("-a " + array +   "           Number of array elements to read, 1 for scalar");
         System.out.println("-w 3.14        CIPReal value to write");
+        System.out.println("");
+        System.out.println("Reading the <tag> 'IDENTITY' will read a set of PLC identity attributes, not an actual tag");
     }
 
     public static void main(final String[] args) throws Exception
@@ -130,11 +132,15 @@ public class Main
             plc.connectTcp();
 
             if (write != null)
-            {
+            {   // Write
                 plc.writeTag(tag, write);
             }
+            else if ("IDENTITY".equals(tag))
+            {   // Read standard set of attributes
+                System.out.println(plc.getIdentity());
+            }
             else
-            {
+            {   // Read tag
                 final CIPData data = plc.readTag(tag, array);
                 System.out.println(data);
             }
