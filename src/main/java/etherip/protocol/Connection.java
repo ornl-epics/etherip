@@ -34,7 +34,14 @@ public abstract class Connection implements AutoCloseable
 
     private int session = 0;
 
+    /** Timeout for individual read/write operation */
     protected long timeout_ms = 2000;
+
+    /** TCP connection will apply 'timeout_ms' to individual read,
+     *  and this retry count to overall read of one message
+     */
+    protected long max_retry_count = 10;
+
     protected int port = 0xAF12;
 
     /**

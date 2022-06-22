@@ -12,6 +12,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
 import etherip.util.Hexdump;
@@ -99,8 +100,11 @@ public class TcpConnection extends Connection
     {
         // Read until protocol has enough data to decode
         this.buffer.clear();
+        long count = 0;
         do
         {
+            if (++count > max_retry_count)
+                throw new TimeoutException("Message response time out");
             this.channel.read(this.buffer).get(this.timeout_ms, MILLISECONDS);
         }
         while (this.buffer.position() < decoder.getResponseSize(this.buffer));
@@ -122,7 +126,7 @@ public class TcpConnection extends Connection
             decoder.decode(this.buffer, this.buffer.remaining(), log);
         }
         finally
-        { // Show log even on error
+        {   // Show log even on error
             if (log != null)
             {
                 logger.finer("Protocol Decoding\n" + log.toString());
