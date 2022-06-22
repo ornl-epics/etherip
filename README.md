@@ -42,7 +42,7 @@ for IOCs on top of the basic protocol library.
 The Java implementation is currently only the basic read/write library
 with unit tests to demonstrate the functionality.
  
-For basic read/write, see test/etherip/EtherIPDemo.java
+For basic read/write, see test/etherip/EtherIPDemo.java or Main.java for a simple command line tool.
 
 For a 'scan list' that reads tags all the time, but also allows writing them, see test/etherip/scan/ScanListTest.java
 
@@ -55,3 +55,4 @@ Build with maven:
     mvn  -DskipTests=true clean package
     
 Develop in Eclipse via File, Import, Maven, Existing Maven Projects.
+

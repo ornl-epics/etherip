@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Example for calling command line test tool,
+# assuming 'java' is found on the PATH
+
+JAR=`echo target/etherip*.jar`
+java -jar $JAR "$@"

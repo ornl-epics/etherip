@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit
 Bundle-Vendor: Kay Kasemir <kasemirk@ornl.gov> - SNS
+Main-Class: etherip.Main
