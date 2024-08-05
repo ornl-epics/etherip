@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 20120-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class EncapsulationTest
     @Test
     public void testEncode() throws Exception
     {
+    	Transaction.reset();
         final ByteBuffer send = ByteBuffer.allocate(100);
         send.order(Connection.BYTE_ORDER);
 
@@ -69,7 +70,7 @@ public class EncapsulationTest
         final String string = Hexdump.toCompactHexdump(send);
         System.out.println(string);
         assertThat(string, equalTo(
-                "0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 30 30 30 30 - d.*.........0000\n0010 - 30 30 30 45 00 00 00 00 - 000E...."));
+                "0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 30 30 30 30 - d.*.........0000\n0010 - 30 30 30 31 00 00 00 00 - 0001...."));
 
         ByteBuffer receive = ByteBuffer.allocate(100);
         receive.order(Connection.BYTE_ORDER);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class MultiRequestTest
     public void setup()
     {
         TestSettings.logAll();
+        Transaction.reset();
     }
 
     @Test
@@ -56,7 +57,7 @@ public class MultiRequestTest
         System.out.println(dump);
         assertThat(dump,
                 equalTo("0000 - 6F 00 42 00 78 56 34 12 00 00 00 00 30 30 30 30 - o.B.xV4.....0000\n"
-                        + "0010 - 30 30 30 44 00 00 00 00 00 00 00 00 00 00 02 00 - 000D............\n"
+                        + "0010 - 30 30 30 31 00 00 00 00 00 00 00 00 00 00 02 00 - 0001............\n"
                         + "0020 - 00 00 00 00 B2 00 32 00 52 02 20 06 24 01 0A F0 - ......2.R. .$...\n"
                         + "0030 - 24 00 0A 02 20 02 24 01 02 00 06 00 12 00 4C 04 - $... .$.......L.\n"
                         + "0040 - 91 06 6B 61 79 5F 61 69 01 00 4C 04 91 06 6B 61 - ..kay_ai..L...ka\n"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class Encapsulation implements Protocol
         }
     };
 
-    private final byte[] context = Transaction.format(Transaction.nextTransaction());;
+    private final byte[] context = Transaction.format(Transaction.nextTransaction());
     final private Command command;
     private int session;
     final private Protocol body;

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2018 UT-Battelle, LLC.
+ * Copyright (c) 2018-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package etherip.protocol;
-
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Almost unique transaction ID
@@ -25,25 +23,32 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Transaction
 {
     // SYNC on access
-    private static long transaction;
+    private static long transaction = 0;
+
+    /** Reset transactions for repeatable unit tests */
+    static void reset()
+    {
+        synchronized(Transaction.class)
+        {
+        	transaction = 0;
+        }    	
+    }
+    
+    /** @return Next transaction ("context") identifier */
     static long nextTransaction()
     {
         synchronized(Transaction.class)
         {
             ++transaction;
-            if (transaction > 0xffffffffL)
+            if (transaction > 0xFFFFFFFFL)
                 transaction = 1;
             return transaction;
         }
     }
 
+    /** @return Transaction ID as text / ASCII bytes for "context" */
     static byte[] format(final long transaction)
     {
         return String.format("%08X", transaction).getBytes();
-    }
-
-    static long parse(final byte[] bytes)
-    {
-        return -1;
     }
 }
