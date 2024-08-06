@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,10 @@
  *******************************************************************************/
 package etherip.protocol;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import etherip.TestSettings;
 
@@ -34,12 +33,12 @@ public class RegisterSessionDemo
             final RegisterSession register = new RegisterSession();
             tcpConnection.write(register);
 
-            assertThat(register.getSession(), equalTo(0));
+            assertEquals(0, register.getSession());
 
             tcpConnection.read(register);
             System.out.println("Received session 0x"
                     + Integer.toHexString(register.getSession()));
-            assertThat(register.getSession(), not(equalTo(0)));
+            assertNotEquals(0, register.getSession());
         }
     }
 }

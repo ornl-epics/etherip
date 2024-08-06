@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,12 @@
  *******************************************************************************/
 package etherip.types;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.ByteBuffer;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import etherip.TestSettings;
 import etherip.types.CIPData.Type;
@@ -31,26 +30,25 @@ public class CIPDataTest
     public void testFloat() throws Exception
     {
         // Decode
-        final CIPData data = new CIPData(CIPData.Type.REAL, new byte[] {
-                (byte) 0xF9, (byte) 0x0F, (byte) 0x49, (byte) 0x40 });
+        final CIPData data = new CIPData(CIPData.Type.REAL,
+        		new byte[] { (byte) 0xF9, (byte) 0x0F, (byte) 0x49, (byte) 0x40 });
 
-        assertThat(CIPData.Type.REAL, equalTo(data.getType()));
-        assertThat(1, equalTo(data.getElementCount()));
-        assertThat(data.toString(), equalTo("CIP_REAL (0x00CA): [3.1416]"));
+        assertEquals(CIPData.Type.REAL, data.getType());
+        assertEquals(1, data.getElementCount());
+        assertEquals("CIP_REAL (0x00CA): [3.1416]", data.toString());
 
-        assertThat(true, equalTo(data.isNumeric()));
-        assertThat("3.1416", equalTo(data.getNumber(0).toString()));
+        assertTrue(data.isNumeric());
+        assertEquals("3.1416", data.getNumber(0).toString());
 
         // Encode
         final ByteBuffer buf = TestSettings.getBuffer();
         data.encode(buf);
         buf.flip();
-        assertThat(Hexdump.toHex(buf).trim(),
-                equalTo("0000 - CA 00 01 00 F9 0F 49 40"));
+        assertEquals("0000 - CA 00 01 00 F9 0F 49 40", Hexdump.toHex(buf).trim());
 
         // Modify
         data.set(0, 42.0);
-        assertThat(data.toString(), equalTo("CIP_REAL (0x00CA): [42.0]"));
+        assertEquals("CIP_REAL (0x00CA): [42.0]", data.toString());
     }
 
     @Test
@@ -60,14 +58,14 @@ public class CIPDataTest
                 'H', 'e', 'l', 'l', 'o' };
         final CIPData value = new CIPData(CIPData.Type.STRUCT, data);
 
-        assertThat(CIPData.Type.STRUCT, equalTo(value.getType()));
+        assertEquals(CIPData.Type.STRUCT, value.getType());
 
         final String txt = value.getString();
         System.out.println(txt);
-        assertThat(txt, equalTo("Hello"));
+        assertEquals("Hello", txt);
 
-        Assert.assertTrue(value.toString().contains("CIP_STRUCT"));
-        Assert.assertTrue(value.toString().contains("STRING"));
+        assertTrue(value.toString().contains("CIP_STRUCT"));
+        assertTrue(value.toString().contains("STRING"));
     }
 
     @Test
@@ -77,6 +75,6 @@ public class CIPDataTest
         value.set(0, 1);
         value.set(1, 2);
         value.set(2, 3);
-        assertThat(value.toString(), equalTo("CIP_INT (0x00C3): [1, 2, 3]"));
+        assertEquals("CIP_INT (0x00C3): [1, 2, 3]", value.toString());
     }
 }

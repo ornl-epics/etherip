@@ -8,13 +8,11 @@
 package etherip.protocol;
 
 import static etherip.types.CNPath.Identity;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import etherip.TestSettings;
 import etherip.protocol.Encapsulation.Command;
@@ -27,14 +25,14 @@ public class SendRRDataTest
 {
     final private ByteBuffer buf = TestSettings.getBuffer();
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         TestSettings.logAll();
         Transaction.reset();
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void testSendRRData() throws Exception
     {
         final MessageRouterProtocol pdu = new MessageRouterProtocol(
@@ -50,7 +48,7 @@ public class SendRRDataTest
         this.buf.flip();
         final String hex = Hexdump.toHexdump(this.buf);
         System.out.println(hex);
-        assertThat(hex, equalTo(
-                "0000 - 6F 00 18 00 00 71 02 12 00 00 00 00 30 30 30 30 - o....q......0000\n0010 - 30 30 30 31 00 00 00 00 00 00 00 00 00 00 02 00 - 0001............\n0020 - 00 00 00 00 B2 00 08 00 0E 03 20 01 24 01 30 07 - .......... .$.0.\n"));
+        assertEquals("0000 - 6F 00 18 00 00 71 02 12 00 00 00 00 30 30 30 30 - o....q......0000\n0010 - 30 30 30 31 00 00 00 00 00 00 00 00 00 00 02 00 - 0001............\n0020 - 00 00 00 00 B2 00 08 00 0E 03 20 01 24 01 30 07 - .......... .$.0.\n",
+        		     hex);
     }
 }

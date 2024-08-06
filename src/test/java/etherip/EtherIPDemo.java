@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,18 @@
  *******************************************************************************/
 package etherip;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import etherip.data.CipException;
 import etherip.data.Identity;
@@ -30,7 +29,7 @@ import etherip.types.CIPData.Type;
 @SuppressWarnings("nls")
 public class EtherIPDemo
 {
-    @Before
+    @BeforeEach
     public void setup()
     {
         TestSettings.logAll();
@@ -64,7 +63,7 @@ public class EtherIPDemo
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testConnectUdp() throws Exception
     {
         Logger.getLogger("").setLevel(Level.INFO);
@@ -117,12 +116,12 @@ public class EtherIPDemo
             System.out.println("\n*\n* float '" + tag + "':\n*\n");
             CIPData value = plc.readTag(tag);
             System.out.println(value);
-            assertThat(value, not(nullValue()));
+            assertNotNull(value);
             value.set(0, 47.11);
             plc.writeTag(tag, value);
 
             value = plc.readTag(tag);
-            assertThat(value, not(nullValue()));
+            assertNotNull(value);
             System.out.println("Changed to " + value);
             assertEquals(47.11, value.getNumber(0).doubleValue(), 0.01);
             
@@ -130,7 +129,7 @@ public class EtherIPDemo
             plc.writeTag(tag, value);
 
             value = plc.readTag(tag);
-            assertThat(value, not(nullValue()));
+            assertNotNull(value);
             System.out.println("Changed to " + value);
             assertEquals(48.12, value.getNumber(0).doubleValue(), 0.01);
         }
@@ -152,22 +151,22 @@ public class EtherIPDemo
             System.out.println("\n*\n* int '" + tag + "':\n*\n");
             CIPData value = plc.readTag(tag);
             System.out.println(value);
-            assertThat(value, not(nullValue()));
+            assertNotNull(value);
             value.set(0, 42);
             plc.writeTag(tag, value);
 
             value = plc.readTag(tag);
-            assertThat(value, not(nullValue()));
+            assertNotNull(value);
             System.out.println("Changed to " + value);
-            assertThat(value.getNumber(0).intValue(), equalTo(42));
+            assertEquals(42, value.getNumber(0).intValue());
             
             value.set(0, 47);
             plc.writeTag(tag, value);
 
             value = plc.readTag(tag);
-            assertThat(value, not(nullValue()));
+            assertNotNull(value);
             System.out.println("Changed to " + value);
-            assertThat(value.getNumber(0).intValue(), equalTo(47));
+            assertEquals(47, value.getNumber(0).intValue());
         }
     }
     
@@ -196,22 +195,22 @@ public class EtherIPDemo
             plc.writeTag(tag, value);
             value = plc.readTag(tag);
             System.out.println("Wrote 1: " + value);
-            assertThat(value, not(nullValue()));
-            assertThat(value.getNumber(0).intValue(), not(equalTo(0)));
+            assertNotNull(value);
+            assertNotEquals(0, value.getNumber(0).intValue());
 
             value.set(0, 0);
             plc.writeTag(tag, value);
             value = plc.readTag(tag);
             System.out.println("Wrote 0: " + value);
-            assertThat(value, not(nullValue()));
-            assertThat(value.getNumber(0).intValue(), equalTo(0));
+            assertNotNull(value);
+            assertEquals(0, value.getNumber(0).intValue());
 
             value.set(0, 255);
             plc.writeTags(new String[] { tag }, new CIPData[] { value });
             value = plc.readTag(tag);
             System.out.println("Wrote 255: " + value);
-            assertThat(value, not(nullValue()));
-            assertThat(value.getNumber(0).intValue(), not(equalTo(0)));
+            assertNotNull(value);
+            assertNotEquals(0, value.getNumber(0).intValue());
         }
     }
 
@@ -231,8 +230,8 @@ public class EtherIPDemo
             System.out.println("\n*\n* string '" + tag + "':\n*\n");
             CIPData value = plc.readTag(tag);
             System.out.println(value);
-            assertThat(value, not(nullValue()));
-            assertThat(value.isNumeric(), equalTo(false));
+            assertNotNull(value);
+            assertFalse(value.isNumeric());
             String new_value = value.getString();
             if (new_value.equals("test"))
                 new_value = "Testing!";
@@ -244,7 +243,7 @@ public class EtherIPDemo
 
             value = plc.readTag(tag);
             System.out.println(value);
-            assertThat(value.getString(), equalTo(new_value));
+            assertEquals(new_value, value.getString());
         }
     }
 
@@ -265,8 +264,8 @@ public class EtherIPDemo
                     TestSettings.get("int_tag"),
                     TestSettings.get("string_tag") };
             final CIPData[] results = plc.readTags(tags);
-            assertThat(results, not(nullValue()));
-            assertThat(results.length, equalTo(tags.length));
+            assertNotNull(results);
+            assertEquals(tags.length, results.length);
 
             for (int i = 0; i < results.length; ++i)
             {

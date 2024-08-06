@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,16 @@
 package etherip.scan;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import etherip.Tag;
 import etherip.TagListener;
@@ -37,7 +37,7 @@ public class ScanListTest implements TagListener
     final private CountDownLatch errors = new CountDownLatch(5);
     private TcpConnection connection;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception
     {
         TestSettings.logAll();
@@ -49,7 +49,7 @@ public class ScanListTest implements TagListener
         this.connection.setSession(register.getSession());
     }
 
-    @After
+    @AfterEach
     public void shutdown() throws Exception
     {
         this.connection.close();
@@ -82,7 +82,7 @@ public class ScanListTest implements TagListener
         tag2.addListener(this);
         this.updates.await(10, SECONDS);
 
-        assertThat(this.updates.getCount(), equalTo(0l));
+        assertEquals(0, this.updates.getCount());
 
         scanner.stop();
 
@@ -90,7 +90,8 @@ public class ScanListTest implements TagListener
         tag1.removeListener(this);
     }
 
-    @Test(timeout = 20000)
+    @Test
+    @Timeout(value = 20, unit = SECONDS)
     public void testScanListWrite() throws Exception
     {
         Logger.getLogger("").setLevel(Level.CONFIG);
@@ -102,7 +103,7 @@ public class ScanListTest implements TagListener
         tag1.addListener(this);
         tag2.addListener(this);
         this.updates.await(10, SECONDS);
-        assertThat(this.updates.getCount(), equalTo(0l));
+        assertEquals(0, this.updates.getCount());
 
         // Increment value of tag
         final Number value = tag1.getValue().getNumber(0);
@@ -138,7 +139,7 @@ public class ScanListTest implements TagListener
         tag.addListener(this);
         this.errors.await(10, SECONDS);
 
-        assertThat(this.errors.getCount(), equalTo(0l));
+        assertEquals(0, this.errors.getCount());
 
         scanner.stop();
 

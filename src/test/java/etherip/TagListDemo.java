@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@ package etherip;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import etherip.protocol.Connection;
 import etherip.protocol.RegisterSession;
@@ -21,7 +21,7 @@ import etherip.protocol.TcpConnection;
 @SuppressWarnings("nls")
 public class TagListDemo
 {
-    @Before
+    @BeforeEach
     public void setup()
     {
         TestSettings.logAll();

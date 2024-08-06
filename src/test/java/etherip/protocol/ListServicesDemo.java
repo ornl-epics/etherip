@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,11 @@
  *******************************************************************************/
 package etherip.protocol;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 import etherip.EtherNetIP;
 import etherip.TestSettings;
@@ -37,12 +36,12 @@ public class ListServicesDemo
             etherNetIP.connectTcp();
 
             final Service[] services = etherNetIP.listServices();
-            assertThat(services, not(nullValue()));
+            assertTrue(services != null);
 
             // In principle, multiple services could be supported.
             // So far have only seen this one
-            assertThat(services.length, equalTo(1));
-            assertThat(services[0].getName(), equalTo("Communications.."));
+            assertEquals(1, services.length);
+            assertEquals("Communications..", services[0].getName());
         }
     }
 }
