@@ -30,8 +30,8 @@ public class Transaction
     {
         synchronized(Transaction.class)
         {
-        	transaction = 0;
-        }    	
+            transaction = 0;
+        }
     }
     
     /** @return Next transaction ("context") identifier */

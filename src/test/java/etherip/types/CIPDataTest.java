@@ -31,7 +31,7 @@ public class CIPDataTest
     {
         // Decode
         final CIPData data = new CIPData(CIPData.Type.REAL,
-        		new byte[] { (byte) 0xF9, (byte) 0x0F, (byte) 0x49, (byte) 0x40 });
+            new byte[] { (byte) 0xF9, (byte) 0x0F, (byte) 0x49, (byte) 0x40 });
 
         assertEquals(CIPData.Type.REAL, data.getType());
         assertEquals(1, data.getElementCount());

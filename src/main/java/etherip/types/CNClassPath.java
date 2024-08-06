@@ -57,19 +57,17 @@ public class CNClassPath extends CNPath
     @Override
     public int getRequestSize()
     {
-    	int size = 4; // a base path with 2 single byte elements
-    	if (shortClassId()) {
-    		size += 2;
-    	}
-    	if (shortInstanceId()) {
-    		size += 2;
-    	}
-    	if (hasAttribute()) {
-    		size += 2;
-    		if (shortAttributeId()) {
-        		size += 2;
-    		}
-    	}
+        int size = 4; // a base path with 2 single byte elements
+        if (shortClassId())
+            size += 2;
+        if (shortInstanceId())
+            size += 2;
+        if (hasAttribute())
+        {
+            size += 2;
+            if (shortAttributeId())
+                size += 2;
+        }
         return size;
     }
 
@@ -79,94 +77,95 @@ public class CNClassPath extends CNPath
     {
         buf.put(this.getPathLength());
         buf.put((byte) classSegmentType());
-        if (shortClassId()) {
-        	buf.put((byte) 0); // Padding
-        	buf.putShort((short) this.class_code);
+        if (shortClassId())
+        {
+            buf.put((byte) 0); // Padding
+            buf.putShort((short) this.class_code);
         }
-        else {
-        	buf.put((byte) this.class_code);
-        }
+        else
+            buf.put((byte) this.class_code);
         
         buf.put((byte) instanceSegmentType());
-        if (shortInstanceId()) {
-        	buf.put((byte) 0); // Padding
-        	buf.putShort((short) this.instance);
+        if (shortInstanceId())
+        {
+            buf.put((byte) 0); // Padding
+            buf.putShort((short) this.instance);
         }
-        else {
-        	buf.put((byte) this.instance);
-        }
+        else
+            buf.put((byte) this.instance);
 
         if (hasAttribute())
         {
             buf.put((byte) attributeSegmentType());
-            if (shortAttributeId()) {
-            	buf.put((byte) 0); // Padding
-            	buf.putShort((short) this.attr);
+            if (shortAttributeId())
+            {
+                buf.put((byte) 0); // Padding
+                buf.putShort((short) this.attr);
             }
-            else {
-            	buf.put((byte) this.attr);
-            }
+            else
+                buf.put((byte) this.attr);
         }
     }
     
-    private byte classSegmentType() {
-    	if (shortClassId()) {
-    		return 0x21;
-    	}
-		return 0x20;
+    private byte classSegmentType()
+    {
+        if (shortClassId())
+            return 0x21;
+        return 0x20;
     }
 
-	private boolean shortClassId() {
-		return this.class_code > 0xFF;
-	}
-
-    private byte instanceSegmentType() {
-    	if (shortInstanceId()) {
-    		return 0x25;
-    	}
-		return 0x24;
+    private boolean shortClassId()
+    {
+        return this.class_code > 0xFF;
     }
 
-	private boolean shortInstanceId() {
-		return this.instance > 0xFF;
-	}
+    private byte instanceSegmentType()
+    {
+        if (shortInstanceId())
+            return 0x25;
+        return 0x24;
+    }
 
-    private boolean hasAttribute() {
-    	return this.attr > 0;
+    private boolean shortInstanceId()
+    {
+        return this.instance > 0xFF;
+    }
+
+    private boolean hasAttribute()
+    {
+        return this.attr > 0;
     }
     
-    private byte attributeSegmentType() {
-    	if (shortAttributeId()) {
-    		return 0x31;
-    	}
-		return 0x30;
+    private byte attributeSegmentType()
+    {
+        if (shortAttributeId())
+            return 0x31;
+        return 0x30;
     }
 
-	private boolean shortAttributeId() {
-		return this.attr > 0xFF;
-	}
+    private boolean shortAttributeId()
+    {
+        return this.attr > 0xFF;
+    }
 
     @Override
     public String toString()
     {
-    	StringBuilder description = new StringBuilder();
-    	description.append("Path ");
-    	if (hasAttribute()) {
-    		description.append("(3 el)");
-    	}
-    	else {
-    		description.append("(2 el)");
-    	}
-		description.append(" Class(0x").append(Integer.toHexString(classSegmentType())).append(" ");
-		description.append("0x").append(Integer.toHexString(this.class_code)).append(") ");
-		description.append(this.class_name);
-		
-		description.append(", instance(0x").append(Integer.toHexString(instanceSegmentType())).append(") ").append(this.instance);
-		
-    	if (hasAttribute()) {
-    		description.append(", attribute(0x").append(Integer.toHexString(attributeSegmentType())).append(") ").append(this.attr);
-    	}
-    	return description.toString();
+        StringBuilder description = new StringBuilder();
+        description.append("Path ");
+        if (hasAttribute())
+            description.append("(3 el)");
+        else
+            description.append("(2 el)");
+        description.append(" Class(0x").append(Integer.toHexString(classSegmentType())).append(" ");
+        description.append("0x").append(Integer.toHexString(this.class_code)).append(") ");
+        description.append(this.class_name);
+        
+        description.append(", instance(0x").append(Integer.toHexString(instanceSegmentType())).append(") ").append(this.instance);
+        
+        if (hasAttribute())
+            description.append(", attribute(0x").append(Integer.toHexString(attributeSegmentType())).append(") ").append(this.attr);
+        return description.toString();
     }
 
     @Override
@@ -189,13 +188,13 @@ public class CNClassPath extends CNPath
             buf.get(raw);
             if (raw[0] == 0x20)
             {
-                this.class_code = new Integer(raw[1]);
+                this.class_code = (int) raw[1];
                 this.class_name = "Ethernet Link";
             }
             buf.get(raw);
             if (raw[0] == 0x24)
             {
-                this.instance(new Integer(raw[1]));
+                this.instance((int) raw[1]);
             }
         }
     }

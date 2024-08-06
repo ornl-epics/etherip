@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 UT-Battelle, LLC.
+ * Copyright (c) 2012-2024 UT-Battelle, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,19 +36,21 @@ public class CNSymbolPath extends CNPath
     public static class PathElement
     {
         private static final int MAX_BYTE_VALUE = 255;
-		private final String path;
+        private final String path;
         private final Integer index;
-		private boolean firstElement;
+        private boolean firstElement;
 
         public PathElement(final boolean firstElement, final String path, final Integer index)
         {
             this.firstElement = firstElement;
-            if (path.matches("^[0-9]+$")) {
-            	this.path = null;
-            	this.index = Integer.parseInt(path);
+            if (path.matches("^[0-9]+$"))
+            {
+                this.path = null;
+                this.index = Integer.parseInt(path);
             }
-            else {
-            	this.path = path;
+            else
+            {
+                this.path = path;
                 this.index = index;
             }
         }
@@ -63,77 +65,84 @@ public class CNSymbolPath extends CNPath
             return this.index;
         }
         
-        public int getEncodedSize() {
-        	int size = 0;
-        	if (firstElement && path == null) {
-        		size += 2; // Add space for Symbol Class ID
-        	}
+        public int getEncodedSize()
+        {
+            int size = 0;
+            if (firstElement && path == null)
+                size += 2; // Add space for Symbol Class ID
 
-        	if (path != null) {
-        		size += path.length() + 2;
-        		if (needPad()) {
-        			size += 1;
-        		}
-        	}
-        	if (index != null) {
-        		size += 2;
-        		if (index > MAX_BYTE_VALUE) {
-        			size += 2;
-        		}
-        	}
-        	return size;
+            if (path != null)
+            {
+                size += path.length() + 2;
+                if (needPad())
+                    size += 1;
+            }
+            if (index != null)
+            {
+                size += 2;
+                if (index > MAX_BYTE_VALUE)
+                    size += 2;
+            }
+            return size;
         }
         
-        public void encode(final ByteBuffer buf) {
-        	if (firstElement && path == null) {
-        		encodeInstanceId(buf);
-        	}
-        	else {
-   	        	encodeElementName(buf);
-   	            encodeElementId(buf);
-        	}
+        public void encode(final ByteBuffer buf)
+        {
+            if (firstElement && path == null)
+                encodeInstanceId(buf);
+            else
+            {
+                   encodeElementName(buf);
+                   encodeElementId(buf);
+            }
         }
 
-		private void encodeInstanceId(final ByteBuffer buf) {
-			buf.put(new byte[] {0x20, 0x6B}); // Logical Segment for Symbol Class ID
-			if (index > MAX_BYTE_VALUE) {
-				buf.put((byte) 0x25);
-				buf.put((byte) 0);
-				buf.putShort(index.shortValue());            		
-			}
-			else {
-				buf.put((byte) 0x24);
-				buf.put(index.byteValue());
-			}
-		}
-
-		private void encodeElementName(final ByteBuffer buf) {
-			if (path != null) {
-                // spec 4 p.21: "ANSI extended symbol segment"
-	            buf.put((byte) 0x91);
-	            buf.put((byte) path.length());
-	            buf.put(path.getBytes());
-	            if (this.needPad())
-	            {
-	                buf.put((byte) 0);
-	            }
-        	}
-		}
-
-		private void encodeElementId(final ByteBuffer buf) {
-			if (index != null)
+        private void encodeInstanceId(final ByteBuffer buf)
+        {
+            buf.put(new byte[] {0x20, 0x6B}); // Logical Segment for Symbol Class ID
+            if (index > MAX_BYTE_VALUE)
             {
-            	if (index > MAX_BYTE_VALUE) {
-            		buf.put((byte) 0x29);
-            		buf.put((byte) 0);
-            		buf.putShort(index.shortValue());            		
-            	}
-            	else {
-            		buf.put((byte) 0x28);
-            		buf.put(index.byteValue());
-            	}
+                buf.put((byte) 0x25);
+                buf.put((byte) 0);
+                buf.putShort(index.shortValue());                    
             }
-		}
+            else
+            {
+                buf.put((byte) 0x24);
+                buf.put(index.byteValue());
+            }
+        }
+
+        private void encodeElementName(final ByteBuffer buf)
+        {
+            if (path != null)
+            {
+                // spec 4 p.21: "ANSI extended symbol segment"
+                buf.put((byte) 0x91);
+                buf.put((byte) path.length());
+                buf.put(path.getBytes());
+                if (this.needPad())
+                    buf.put((byte) 0);
+            }
+        }
+
+        private void encodeElementId(final ByteBuffer buf)
+        {
+            if (index != null)
+            {
+                if (index > MAX_BYTE_VALUE)
+                {
+                    buf.put((byte) 0x29);
+                    buf.put((byte) 0);
+                    buf.putShort(index.shortValue());                    
+                }
+                else
+                {
+                    buf.put((byte) 0x28);
+                    buf.put(index.byteValue());
+                }
+            }
+        }
 
         /** @return Is path of odd length, requiring a pad byte? */
         private boolean needPad()
@@ -146,9 +155,7 @@ public class CNSymbolPath extends CNPath
         public String toString()
         {
             if (this.index == null)
-            {
                 return this.path;
-            }
             return this.path + "[" + this.index + "]";
         }
     };
@@ -183,8 +190,9 @@ public class CNSymbolPath extends CNPath
         }
     }
     
-    public List<PathElement> getElements() {
-    	return Collections.unmodifiableList(elements);
+    public List<PathElement> getElements()
+    {
+        return Collections.unmodifiableList(elements);
     }
 
     /** {@inheritDoc} */
@@ -193,9 +201,7 @@ public class CNSymbolPath extends CNPath
     { // End of string is padded if length is odd
         int count = 0;
         for (final PathElement s : this.elements)
-        {
             count += s.getEncodedSize();
-        }
         return count;
     }
 
@@ -205,9 +211,7 @@ public class CNSymbolPath extends CNPath
     {
         buf.put((byte) (this.getRequestSize() / 2));
         for (final PathElement pi : this.elements)
-        {
-        	pi.encode(buf);
-        }
+            pi.encode(buf);
     }
 
     @Override
@@ -218,14 +222,10 @@ public class CNSymbolPath extends CNPath
         for (final PathElement pi : this.elements)
         {
             if (buf.length() > 18)
-            {
                 buf.append(", ");
-            }
             buf.append('\'').append(pi).append('\'');
             if (pi.needPad())
-            {
                 buf.append(", 0x00");
-            }
         }
         return buf.toString();
     }

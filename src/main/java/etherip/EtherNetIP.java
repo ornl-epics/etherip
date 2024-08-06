@@ -70,7 +70,7 @@ public class EtherNetIP implements AutoCloseable
     final public static Logger logger = Logger
             .getLogger(EtherNetIP.class.getName());
 
-	private static final int MAX_REQUEST_SIZE = 450;
+    private static final int MAX_REQUEST_SIZE = 450;
 
     final private String address;
     final private int slot;
@@ -416,21 +416,21 @@ public class EtherNetIP implements AutoCloseable
         return attr_proto.getValue();
     }
 
-	/** Read a single scalar tag
-	 *  @param tag Name of tag
-	 *  @return Current value of the tag
-	 *  @throws Exception on error
-	 */
-	public CIPData readTag(final String tag) throws Exception
-	{
-		return this.readTag(tag, (short) 1);
-	}
+    /** Read a single scalar tag
+     *  @param tag Name of tag
+     *  @return Current value of the tag
+     *  @throws Exception on error
+     */
+    public CIPData readTag(final String tag) throws Exception
+    {
+        return this.readTag(tag, (short) 1);
+    }
 
-	public void executeRequest(Protocol request) throws Exception {
-		final Encapsulation encap = new Encapsulation(SendRRData, this.connection.getSession(), 
-				new SendRRDataProtocol(new UnconnectedSendProtocol(slot, request)));
-		connection.execute(encap);
-	}
+    public void executeRequest(Protocol request) throws Exception {
+        final Encapsulation encap = new Encapsulation(SendRRData, this.connection.getSession(), 
+                new SendRRDataProtocol(new UnconnectedSendProtocol(slot, request)));
+        connection.execute(encap);
+    }
 
     /** Read a single array tag
      *  @param tag Name of tag
@@ -438,18 +438,18 @@ public class EtherNetIP implements AutoCloseable
      *  @return Current value of the tag
      *  @throws Exception on error
      */
-	public CIPData readTag(final String tag, final short count) throws Exception
-	{
-		final MRChipReadProtocol cip_read = new MRChipReadProtocol(tag, count);
-		final Encapsulation encap =
-			new Encapsulation(SendRRData, this.connection.getSession(),
-				new SendRRDataProtocol(
-					new UnconnectedSendProtocol(this.slot,
-					    cip_read)));
-		this.connection.execute(encap);
+    public CIPData readTag(final String tag, final short count) throws Exception
+    {
+        final MRChipReadProtocol cip_read = new MRChipReadProtocol(tag, count);
+        final Encapsulation encap =
+            new Encapsulation(SendRRData, this.connection.getSession(),
+                new SendRRDataProtocol(
+                    new UnconnectedSendProtocol(this.slot,
+                        cip_read)));
+        this.connection.execute(encap);
 
-		return cip_read.getData();
-	}
+        return cip_read.getData();
+    }
 
 
     /** Read multiple scalar tags in one network transaction
@@ -457,9 +457,9 @@ public class EtherNetIP implements AutoCloseable
      *  @return Current values of the tags
      *  @throws Exception on error
      */
-	public CIPData[] readTags(final String... tags) throws Exception
-	{
-		return readTags(100, tags);
+    public CIPData[] readTags(final String... tags) throws Exception
+    {
+        return readTags(100, tags);
     }
 
     /** Read multiple strings tags in one network transaction.
@@ -468,11 +468,11 @@ public class EtherNetIP implements AutoCloseable
      *  @return Current values of the tags
      *  @throws Exception on error
      */
-	public CIPData[] readStringTags(final String... tags) throws Exception
-	{
-		return readTags(5, tags);
+    public CIPData[] readStringTags(final String... tags) throws Exception
+    {
+        return readTags(5, tags);
     }
-	
+    
     /** Read multiple strings tags in one network transaction.
      *  Messages are splitted in groups with a maximum number of elements and total request size.
      *  maxGroupSize can be large for small atomic type reads, for large response like string reads, the number should be reduce to make 
@@ -482,16 +482,16 @@ public class EtherNetIP implements AutoCloseable
      *  @return Current values of the tags
      *  @throws Exception on error
      */
-	public CIPData[] readTags(final int maxNumberOfRequestsPerGroup, final String... tags) throws Exception
-	{
-	    final MRChipReadProtocol[] reads = new MRChipReadProtocol[tags.length];
-	    for (int i=0; i<reads.length; ++i)
+    public CIPData[] readTags(final int maxNumberOfRequestsPerGroup, final String... tags) throws Exception
+    {
+        final MRChipReadProtocol[] reads = new MRChipReadProtocol[tags.length];
+        for (int i=0; i<reads.length; ++i)
         {
             reads[i] = new MRChipReadProtocol(tags[i]);
         }
-	    sendMultiMessages(maxNumberOfRequestsPerGroup, reads);
+        sendMultiMessages(maxNumberOfRequestsPerGroup, reads);
 
-	    final CIPData[] results = new CIPData[reads.length];
+        final CIPData[] results = new CIPData[reads.length];
         for (int i=0; i<results.length; ++i)
         {
             results[i] = reads[i].getData();
@@ -508,24 +508,25 @@ public class EtherNetIP implements AutoCloseable
      *  @param messages messages to send
      *  @throws Exception on error
      */
-	public void sendMultiMessages(final int maxNumberOfRequestsPerGroup, final MessageRouterProtocol... messages) throws Exception
-	{
-		int currentGroupByteCount = 0;
-		List<MessageRouterProtocol> groupMessages = new ArrayList<>();
-		
-		for (MessageRouterProtocol message : messages) {
-			int messageSize = message.getRequestSize();
-			if (currentGroupByteCount + messageSize > MAX_REQUEST_SIZE || groupMessages.size() == maxNumberOfRequestsPerGroup) {
-				executeMultiMessages(groupMessages.toArray(new MessageRouterProtocol[groupMessages.size()]));
-				currentGroupByteCount = 0;
-				groupMessages.clear();
-			}
-			currentGroupByteCount += messageSize;
-			groupMessages.add(message);
-		}
-		if (groupMessages.size() > 0) {
-			executeMultiMessages(groupMessages.toArray(new MessageRouterProtocol[groupMessages.size()]));
-		}
+    public void sendMultiMessages(final int maxNumberOfRequestsPerGroup, final MessageRouterProtocol... messages) throws Exception
+    {
+        int currentGroupByteCount = 0;
+        List<MessageRouterProtocol> groupMessages = new ArrayList<>();
+        
+        for (MessageRouterProtocol message : messages)
+        {
+            int messageSize = message.getRequestSize();
+            if (currentGroupByteCount + messageSize > MAX_REQUEST_SIZE || groupMessages.size() == maxNumberOfRequestsPerGroup)
+            {
+                executeMultiMessages(groupMessages.toArray(new MessageRouterProtocol[groupMessages.size()]));
+                currentGroupByteCount = 0;
+                groupMessages.clear();
+            }
+            currentGroupByteCount += messageSize;
+            groupMessages.add(message);
+        }
+        if (groupMessages.size() > 0)
+            executeMultiMessages(groupMessages.toArray(new MessageRouterProtocol[groupMessages.size()]));
     }
 
     /** send multiple messages to controller in a single transaction. 
@@ -533,50 +534,47 @@ public class EtherNetIP implements AutoCloseable
      *  @param messages messages to send
      *  @throws Exception on error
      */
-	private void executeMultiMessages(final MessageRouterProtocol[] messages) throws Exception
-	{
-	    final Encapsulation encap =
+    private void executeMultiMessages(final MessageRouterProtocol[] messages) throws Exception
+    {
+        final Encapsulation encap =
             new Encapsulation(SendRRData, this.connection.getSession(),
                 new SendRRDataProtocol(
                     new UnconnectedSendProtocol(this.slot,
                         new MessageRouterProtocol(CNService.CIP_MultiRequest, MessageRouter(),
                             new CIPMultiRequestProtocol(messages)))));
-	    this.connection.execute(encap);
-    }
-
-	/** Write a tag
-	 *  @param tag Tag name
-	 *  @param value Value to write
-	 *  @throws Exception on error
-	 */
-	public void writeTag(final String tag, final CIPData value) throws Exception
-	{
-	    final MRChipWriteProtocol cip_write = new MRChipWriteProtocol(tag, value);
-
-	    final Encapsulation encap =
-	            new Encapsulation(SendRRData, this.connection.getSession(),
-                    new SendRRDataProtocol(
-	                    new UnconnectedSendProtocol(this.slot,
-	                            cip_write)));
         this.connection.execute(encap);
     }
 
-	/** Write multiple tags in one network transaction
-	 *  @param tags Tag names to write
-	 *  @param values Values to write
-	 *  @throws Exception on error
-	 */
-	public void writeTags(final String[] tags, final CIPData[] values) throws Exception
+    /** Write a tag
+     *  @param tag Tag name
+     *  @param value Value to write
+     *  @throws Exception on error
+     */
+    public void writeTag(final String tag, final CIPData value) throws Exception
     {
-	    if (tags.length != values.length)
-        {
+        final MRChipWriteProtocol cip_write = new MRChipWriteProtocol(tag, value);
+
+        final Encapsulation encap =
+                new Encapsulation(SendRRData, this.connection.getSession(),
+                    new SendRRDataProtocol(
+                        new UnconnectedSendProtocol(this.slot,
+                                cip_write)));
+        this.connection.execute(encap);
+    }
+
+    /** Write multiple tags in one network transaction
+     *  @param tags Tag names to write
+     *  @param values Values to write
+     *  @throws Exception on error
+     */
+    public void writeTags(final String[] tags, final CIPData[] values) throws Exception
+    {
+        if (tags.length != values.length)
             throw new IllegalArgumentException("Got " + tags.length + " tags but " + values.length + " values");
-        }
+
         final MRChipWriteProtocol[] writes = new MRChipWriteProtocol[tags.length];
         for (int i=0; i<tags.length; ++i)
-        {
             writes[i] = new MRChipWriteProtocol(tags[i], values[i]);
-        }
 
         final Encapsulation encap =
                 new Encapsulation(SendRRData, this.connection.getSession(),
@@ -586,10 +584,10 @@ public class EtherNetIP implements AutoCloseable
                                         new CIPMultiRequestProtocol(writes)))));
         this.connection.execute(encap);
     }
-	
-	
+    
+    
 
-	//@formatter:on
+    //@formatter:on
 
     /** Unregister session (device will close connection) */
     private void unregisterSession()
@@ -597,9 +595,8 @@ public class EtherNetIP implements AutoCloseable
         try
         {
             if (this.connection.getSession() == 0 || !this.connection.isOpen())
-            {
                 return;
-            }
+
             this.connection.write(new Encapsulation(UnRegisterSession,
                     this.connection.getSession(), new ProtocolAdapter()));
             // Cannot read after this point because PLC will close the connection
@@ -635,7 +632,8 @@ public class EtherNetIP implements AutoCloseable
         return buf.toString();
     }
 
-    public Connection getConnection() {
+    public Connection getConnection()
+    {
         return this.connection;
     }
 }

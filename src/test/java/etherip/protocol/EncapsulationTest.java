@@ -35,13 +35,13 @@ public class EncapsulationTest
     @Test
     public void testCommand()
     {
-    	assertEquals("ListServices (0x0004)", Encapsulation.Command.ListServices.toString());
+        assertEquals("ListServices (0x0004)", Encapsulation.Command.ListServices.toString());
     }
 
     @Test
     public void testEncode() throws Exception
     {
-    	Transaction.reset();
+        Transaction.reset();
         final ByteBuffer send = ByteBuffer.allocate(100);
         send.order(Connection.BYTE_ORDER);
 
@@ -69,7 +69,7 @@ public class EncapsulationTest
         final String string = Hexdump.toCompactHexdump(send);
         System.out.println(string);
         assertEquals("0000 - 64 00 2A 00 00 00 00 00 00 00 00 00 30 30 30 30 - d.*.........0000\n0010 - 30 30 30 31 00 00 00 00 - 0001....",
-        		     string);
+                     string);
 
         ByteBuffer receive = ByteBuffer.allocate(100);
         receive.order(Connection.BYTE_ORDER);

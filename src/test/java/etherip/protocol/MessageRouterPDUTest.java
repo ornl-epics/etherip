@@ -46,7 +46,7 @@ public class MessageRouterPDUTest
         this.buf.flip();
 
         assertEquals("0000 - 0E 03 20 01 24 24 30 06 - .. .$$0.",
-               		 Hexdump.toCompactHexdump(this.buf));
+                     Hexdump.toCompactHexdump(this.buf));
 
         // Fake response
         this.buf.clear();
@@ -94,7 +94,7 @@ public class MessageRouterPDUTest
         this.buf.flip();
 
         assertEquals("0000 - 4C 04 91 06 6B 61 79 5F 61 69 01 00 - L...kay_ai..",
-        		     Hexdump.toCompactHexdump(this.buf));
+                     Hexdump.toCompactHexdump(this.buf));
 
         // Fake response
         this.buf.clear();

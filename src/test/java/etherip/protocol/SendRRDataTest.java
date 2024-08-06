@@ -49,6 +49,6 @@ public class SendRRDataTest
         final String hex = Hexdump.toHexdump(this.buf);
         System.out.println(hex);
         assertEquals("0000 - 6F 00 18 00 00 71 02 12 00 00 00 00 30 30 30 30 - o....q......0000\n0010 - 30 30 30 31 00 00 00 00 00 00 00 00 00 00 02 00 - 0001............\n0020 - 00 00 00 00 B2 00 08 00 0E 03 20 01 24 01 30 07 - .......... .$.0.\n",
-        		     hex);
+                     hex);
     }
 }
