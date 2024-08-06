@@ -35,16 +35,16 @@ What this means:
    to get at the useful data.
  
 See also the ICALEPCS 2001 paper "Interfacing the ControlLogix PLC over Ethernet/IP",
-http://accelconf.web.cern.ch/AccelConf/ica01/papers/THDT002.pdf
+https://accelconf.web.cern.ch/ica01/papers/THDT002.pdf
 
-The C implementation also provides EPICS device support
+The C implementation provides EPICS device support
 for IOCs on top of the basic protocol library.
-The Java implementation is currently only the basic read/write library
+This Java implementation is currently only the basic read/write library
 with unit tests to demonstrate the functionality.
  
-For basic read/write, see test/etherip/EtherIPDemo.java or Main.java for a simple command line tool.
+For basic read/write, see `test/etherip/EtherIPDemo.java` or `Main.java` (called by `etherip` script) for a simple command line tool.
 
-For a 'scan list' that reads tags all the time, but also allows writing them, see test/etherip/scan/ScanListTest.java
+For a 'scan list' that reads tags all the time, but also allows writing them, see `test/etherip/scan/ScanListTest.java`
 
 
 Building
